@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
 
-describe('E2E JWT Sample', () => {
+describe('E2E Login', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
