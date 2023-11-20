@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      Int                      @id @default(autoincrement())
+  email                   String                   @unique
+  password                String
+  fullName                String
+  BoardMembers            BoardMembers[]
+  BoardColumnCard         BoardColumnCard?         @relation(fields: [boardColumnCardId], references: [id])
+  boardColumnCardId       Int?
+  BoardColumnCardComments BoardColumnCardComment[]
+}
+
+model Board {
+  id           Int            @id @default(autoincrement())
+  name         String
+  BoardMembers BoardMembers[]
+  BoardColumns BoardColumn[]
+  BoardLabels  BoardLabel[]
+}
+
+model BoardColumn {
+  id      Int    @id @default(autoincrement())
+  name    String
+  Board   Board  @relation(fields: [boardId], references: [id])
+  boardId Int
+}
+
+model BoardColumnCard {
+  id          Int                      @id @default(autoincrement())
+  summary     String
+  description String                   @db.LongText
+  Labels      BoardLabel[]
+  Members     User[]
+  Comments    BoardColumnCardComment[]
+  dueDate     DateTime?
+}
+
+model BoardLabel {
+  id                Int              @id @default(autoincrement())
+  name              String
+  color             String
+  Board             Board            @relation(fields: [boardId], references: [id])
+  boardId           Int
+  BoardColumnCard   BoardColumnCard? @relation(fields: [boardColumnCardId], references: [id])
+  boardColumnCardId Int?
+
+  @@map("BoardLabels")
+}
+
+model BoardColumnCardComment {
+  id                Int             @id @default(autoincrement())
+  content           String          @db.LongText
+  Creator           User            @relation(fields: [creatorId], references: [id])
+  creatorId         Int
+  BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id])
+  boardColumnCardId Int
+}
+
+model BoardMembers {
+  Member     User      @relation(fields: [memberId], references: [id])
+  memberId   Int
+  memberRole BoardRole
+  Board      Board     @relation(fields: [boardId], references: [id])
+  boardId    Int
+
+  @@id([memberId, boardId])
+}
+
+enum BoardRole {
+  COLLABORATOR
+  ADMIN
+  OBSERVER
+}
