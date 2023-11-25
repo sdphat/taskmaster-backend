@@ -23,6 +23,26 @@ import ms from 'ms';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  private attachAccessToken(response: ExpressResponse, accessToken: string) {
+    response.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      maxAge: ms(process.env.ACCESS_TOKEN_MAX_AGE),
+      domain: 'localhost',
+      sameSite: 'strict',
+    });
+  }
+
+  private attachRefreshToken(response: ExpressResponse, refreshToken: string) {
+    response.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      maxAge: ms(process.env.REFRESH_TOKEN_MAX_AGE),
+      domain: 'localhost',
+      sameSite: 'strict',
+    });
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @Public()
@@ -34,21 +54,8 @@ export class AuthController {
       signInDto.email,
       signInDto.password,
     );
-    response.cookie('access_token', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      maxAge: ms('30s'),
-      domain: 'localhost',
-      sameSite: 'strict',
-    });
-
-    response.cookie('refresh_token', refresh_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      maxAge: ms('1d'),
-      domain: 'localhost',
-      sameSite: 'strict',
-    });
+    this.attachAccessToken(response, access_token);
+    this.attachRefreshToken(response, refresh_token);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -59,14 +66,7 @@ export class AuthController {
   ) {
     const refreshToken = request.cookies['refresh_token'];
     const { access_token } = await this.authService.refresh(refreshToken);
-
-    response.cookie('access_token', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-      maxAge: ms('30s'),
-      domain: 'localhost',
-      sameSite: 'strict',
-    });
+    this.attachAccessToken(response, access_token);
   }
 
   @UseGuards(AuthGuard)
