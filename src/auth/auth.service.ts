@@ -1,13 +1,24 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
 import { compare } from 'bcrypt';
+import { UsersService } from '../users/users.service';
+import { AccessTokenJwtService } from './AccessTokenJwt.service';
+import { RefreshTokenJwtService } from './RefreshTokenJwt.service';
+import { IsNumber, IsString, validate } from 'class-validator';
 
+class RefreshTokenUser {
+  @IsNumber()
+  sub: number;
+  @IsString()
+  email: string;
+  @IsString()
+  password: string;
+}
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
+    private accessTokenJwtService: AccessTokenJwtService,
+    private refreshTokenJwtService: RefreshTokenJwtService,
   ) {}
 
   async signIn(email: string, password: string) {
@@ -23,7 +34,23 @@ export class AuthService {
 
     const payload = { sub: user.id, email: user.email };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.accessTokenJwtService.generate(payload),
+      refresh_token: await this.refreshTokenJwtService.generate(payload),
+    };
+  }
+
+  async refresh(refreshToken: string) {
+    const userInfo =
+      await this.refreshTokenJwtService.verify<RefreshTokenUser>(refreshToken);
+
+    const validationErrors = await validate(userInfo);
+    if (validationErrors.length > 0) {
+      throw new UnauthorizedException();
+    }
+
+    const payload = { sub: userInfo.sub, email: userInfo.email };
+    return {
+      access_token: await this.accessTokenJwtService.generate(payload),
     };
   }
 }

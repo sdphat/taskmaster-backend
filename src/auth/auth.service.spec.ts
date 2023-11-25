@@ -12,7 +12,7 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         JwtModule.register({
-          secret: jwtConstants.secret,
+          secret: jwtConstants.accessTokenSecret,
           signOptions: { expiresIn: '60s' },
         }),
       ],
