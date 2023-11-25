@@ -36,7 +36,7 @@ export class AuthController {
     );
     response.cookie('access_token', access_token, {
       httpOnly: true,
-      // secure: true,
+      secure: process.env.NODE_ENV !== 'development',
       maxAge: ms('30s'),
       domain: 'localhost',
       sameSite: 'strict',
@@ -44,7 +44,7 @@ export class AuthController {
 
     response.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      // secure: true,
+      secure: process.env.NODE_ENV !== 'development',
       maxAge: ms('1d'),
       domain: 'localhost',
       sameSite: 'strict',
@@ -62,7 +62,7 @@ export class AuthController {
 
     response.cookie('access_token', access_token, {
       httpOnly: true,
-      // secure: true,
+      secure: process.env.NODE_ENV !== 'development',
       maxAge: ms('30s'),
       domain: 'localhost',
       sameSite: 'strict',
