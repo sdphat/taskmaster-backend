@@ -6,18 +6,17 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards,
   Response,
 } from '@nestjs/common';
 import {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
-import { AuthGuard } from './auth.guard';
+import ms from 'ms';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
+import { RegisterDto } from './dto/register.dto';
 import { SignInDto } from './dto/sign-in.dto';
-import ms from 'ms';
 
 @Controller('auth')
 export class AuthController {
@@ -69,9 +68,21 @@ export class AuthController {
     this.attachAccessToken(response, access_token);
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('register')
+  @Public()
+  async register(
+    @Body() registerDto: RegisterDto,
+    @Response({ passthrough: true }) res: ExpressResponse,
+  ) {
+    const { access_token, refresh_token } =
+      await this.authService.register(registerDto);
+    this.attachAccessToken(res, access_token);
+    this.attachRefreshToken(res, refresh_token);
   }
 }
