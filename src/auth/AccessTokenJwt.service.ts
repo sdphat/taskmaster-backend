@@ -9,7 +9,7 @@ export class AccessTokenJwtService {
   async generate(payload: any): Promise<string> {
     return this.jwtService.signAsync(payload, {
       secret: jwtConstants.accessTokenSecret,
-      expiresIn: '5m',
+      expiresIn: jwtConstants.accessTokenMaxAge,
     });
   }
 

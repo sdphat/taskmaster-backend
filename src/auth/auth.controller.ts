@@ -17,6 +17,7 @@ import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { RegisterDto } from './dto/register.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { jwtConstants } from './constants';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +27,7 @@ export class AuthController {
     response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
-      maxAge: ms(process.env.ACCESS_TOKEN_MAX_AGE),
+      maxAge: ms(jwtConstants.accessTokenMaxAge),
       domain: 'localhost',
       sameSite: 'strict',
     });
@@ -36,7 +37,7 @@ export class AuthController {
     response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
-      maxAge: ms(process.env.REFRESH_TOKEN_MAX_AGE),
+      maxAge: ms(jwtConstants.refreshTokenMaxAge),
       domain: 'localhost',
       sameSite: 'strict',
     });

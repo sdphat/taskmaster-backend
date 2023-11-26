@@ -9,7 +9,7 @@ export class RefreshTokenJwtService {
   async generate(payload: any): Promise<string> {
     return this.jwtService.signAsync(payload, {
       secret: jwtConstants.refreshTokenSecret,
-      expiresIn: '1d',
+      expiresIn: jwtConstants.refreshTokenMaxAge,
     });
   }
 
