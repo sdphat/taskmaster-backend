@@ -4,12 +4,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { compare } from 'bcrypt';
+import { User } from '@prisma/client';
+import bcrypt, { compare } from 'bcrypt';
+import { IsNumber, IsString, validate } from 'class-validator';
 import { UsersService } from '../users/users.service';
 import { AccessTokenJwtService } from './AccessTokenJwt.service';
 import { RefreshTokenJwtService } from './RefreshTokenJwt.service';
-import { IsNumber, IsString, validate } from 'class-validator';
-import { User } from '@prisma/client';
 
 class RegisterInfo {
   @IsString()
@@ -66,7 +66,13 @@ export class AuthService {
       throw new ConflictException();
     }
 
-    const createdUser: User = await this.usersService.create(registerInfo);
+    const createdUser: User = await this.usersService.create({
+      ...registerInfo,
+      password: await bcrypt.hash(
+        registerInfo.password,
+        +process.env.SALT_ROUNDS,
+      ),
+    });
 
     if (!createdUser) {
       throw new BadRequestException();
