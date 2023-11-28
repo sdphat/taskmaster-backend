@@ -28,7 +28,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.accessTokenMaxAge),
-      domain: 'localhost',
+      // domain: 'localhost',
       sameSite: 'strict',
     });
   }
@@ -38,7 +38,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.refreshTokenMaxAge),
-      domain: 'localhost',
+      // domain: 'localhost',
       sameSite: 'strict',
     });
   }
