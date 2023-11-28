@@ -7,6 +7,7 @@ import {
   Post,
   Request,
   Response,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   Request as ExpressRequest,
@@ -60,11 +61,16 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Get('refresh')
+  @Public()
   async refresh(
     @Request() request: ExpressRequest,
     @Response({ passthrough: true }) response: ExpressResponse,
   ) {
     const refreshToken = request.cookies['refresh_token'];
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
+
     const { access_token } = await this.authService.refresh(refreshToken);
     this.attachAccessToken(response, access_token);
   }
