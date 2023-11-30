@@ -5,8 +5,12 @@ import { PrismaService } from '../prisma.service';
 @Injectable()
 export class UsersService {
   constructor(private prismaService: PrismaService) {}
-  async findOne(email: string): Promise<User | undefined> {
+  async findOne(
+    email: string,
+    select?: Prisma.UserSelectScalar,
+  ): Promise<User | undefined> {
     return this.prismaService.user.findUnique({
+      select,
       where: {
         email,
       },

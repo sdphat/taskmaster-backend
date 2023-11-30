@@ -75,9 +75,10 @@ export class AuthController {
     this.attachAccessToken(response, access_token);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    return this.authService.getProfile(req.user.email);
   }
 
   @HttpCode(HttpStatus.OK)

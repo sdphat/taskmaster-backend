@@ -30,6 +30,11 @@ class RefreshTokenUser {
   @IsString()
   password: string;
 }
+
+export class UserPublicBriefInfo {
+  fullName: string;
+  email: string;
+}
 @Injectable()
 export class AuthService {
   constructor(
@@ -98,5 +103,21 @@ export class AuthService {
     return {
       access_token: await this.accessTokenJwtService.generate(payload),
     };
+  }
+
+  async getProfile(email: string): Promise<UserPublicBriefInfo> {
+    const userInfo: UserPublicBriefInfo = await this.usersService.findOne(
+      email,
+      {
+        email: true,
+        fullName: true,
+      },
+    );
+
+    if (!userInfo) {
+      throw new UnauthorizedException();
+    }
+
+    return userInfo;
   }
 }
