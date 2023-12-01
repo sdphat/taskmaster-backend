@@ -30,6 +30,22 @@ const userData: Prisma.UserCreateInput[] = [
 const boardData: Prisma.BoardCreateInput[] = [
   {
     name: 'Thundermail',
+    BoardLabels: {
+      create: [
+        {
+          color: '#0062FF',
+          name: 'Low priority',
+        },
+        {
+          color: '#FFC100',
+          name: 'Medium priority',
+        },
+        {
+          color: '#FF003B',
+          name: 'High priority',
+        },
+      ],
+    },
     BoardColumns: {
       create: [
         {
@@ -64,25 +80,19 @@ const boardData: Prisma.BoardCreateInput[] = [
                     creatorId: 2,
                   },
                 },
+                Labels: {
+                  connect: [
+                    {
+                      id: 1,
+                    },
+                    {
+                      id: 2,
+                    },
+                  ],
+                },
               },
             ],
           },
-        },
-      ],
-    },
-    BoardLabels: {
-      create: [
-        {
-          color: '#0062FF',
-          name: 'Low priority',
-        },
-        {
-          color: '#FFC100',
-          name: 'Medium priority',
-        },
-        {
-          color: '#FF003B',
-          name: 'High priority',
         },
       ],
     },

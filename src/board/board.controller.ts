@@ -5,11 +5,6 @@ import { BoardService } from './board.service';
 export class BoardController {
   constructor(private boardService: BoardService) {}
 
-  @Get()
-  async test() {
-    return 'hello';
-  }
-
   @Get(':boardId')
   async getBoard(
     @Param('boardId') boardId: number,

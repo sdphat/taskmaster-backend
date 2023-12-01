@@ -16,7 +16,16 @@ export class BoardService {
           select: {
             name: true,
             id: true,
-            BoardColumnCards: true,
+            BoardColumnCards: {
+              select: {
+                Comments: true,
+                description: true,
+                dueDate: true,
+                Labels: true,
+                Members: true,
+                summary: true,
+              },
+            },
           },
         },
         BoardLabels: true,
