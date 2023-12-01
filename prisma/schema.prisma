@@ -14,7 +14,7 @@ model User {
   id                      Int                      @id @default(autoincrement())
   email                   String                   @unique
   password                String
-  fullName                String  
+  fullName                String
   BoardMembers            BoardMember[]
   BoardColumnCard         BoardColumnCard?         @relation(fields: [boardColumnCardId], references: [id])
   boardColumnCardId       Int?
@@ -22,7 +22,7 @@ model User {
 }
 
 model Board {
-  id           Int            @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   name         String
   BoardMembers BoardMember[]
   BoardColumns BoardColumn[]
@@ -30,20 +30,23 @@ model Board {
 }
 
 model BoardColumn {
-  id      Int    @id @default(autoincrement())
-  name    String
-  Board   Board  @relation(fields: [boardId], references: [id])
-  boardId Int
+  id               Int               @id @default(autoincrement())
+  name             String
+  Board            Board             @relation(fields: [boardId], references: [id])
+  BoardColumnCards BoardColumnCard[]
+  boardId          Int
 }
 
 model BoardColumnCard {
-  id          Int                      @id @default(autoincrement())
-  summary     String
-  description String                   @db.LongText
-  Labels      BoardLabel[]
-  Members     User[]
-  Comments    BoardColumnCardComment[]
-  dueDate     DateTime?
+  id            Int                      @id @default(autoincrement())
+  summary       String
+  description   String                   @db.LongText
+  Labels        BoardLabel[]
+  Members       User[]
+  Comments      BoardColumnCardComment[]
+  dueDate       DateTime?
+  BoardColumn   BoardColumn?             @relation(fields: [boardColumnId], references: [id])
+  boardColumnId Int?
 }
 
 model BoardLabel {

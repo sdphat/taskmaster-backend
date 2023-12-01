@@ -27,6 +27,96 @@ const userData: Prisma.UserCreateInput[] = [
   },
 ];
 
+const boardData: Prisma.BoardCreateInput[] = [
+  {
+    name: 'Thundermail',
+    BoardColumns: {
+      create: [
+        {
+          name: 'Sprint 1',
+          BoardColumnCards: {
+            create: [
+              {
+                summary: 'Create login page',
+                description:
+                  'Login page must include email field, password field, login button and a link to register page.',
+                dueDate: new Date(2023, 10, 20),
+              },
+              {
+                summary: 'Create register page',
+                description:
+                  'Register page must include email, full name, password field, register button and a link to login page.',
+                dueDate: new Date(2023, 10, 22),
+              },
+            ],
+          },
+        },
+        {
+          name: 'Sprint 2',
+          BoardColumnCards: {
+            create: [
+              {
+                summary: 'Support login with google',
+                description: 'Support login with google',
+                Comments: {
+                  create: {
+                    content: 'What other methods do we need to add in as well?',
+                    creatorId: 2,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    BoardLabels: {
+      create: [
+        {
+          color: '#0062FF',
+          name: 'Low priority',
+        },
+        {
+          color: '#FFC100',
+          name: 'Medium priority',
+        },
+        {
+          color: '#FF003B',
+          name: 'High priority',
+        },
+      ],
+    },
+    BoardMembers: {
+      create: [
+        {
+          memberRole: 'ADMIN',
+          Member: {
+            connect: {
+              id: 4,
+            },
+          },
+        },
+        {
+          memberRole: 'COLLABORATOR',
+          Member: {
+            connect: {
+              id: 1,
+            },
+          },
+        },
+        {
+          memberRole: 'COLLABORATOR',
+          Member: {
+            connect: {
+              id: 2,
+            },
+          },
+        },
+      ],
+    },
+  },
+];
+
 async function main() {
   console.log(`Start seeding ...`);
   for (const u of userData) {
@@ -34,6 +124,14 @@ async function main() {
       data: u,
     });
     console.log(`Created user with id: ${user.id}`);
+  }
+
+  for (const b of boardData) {
+    const board = await prisma.board.create({
+      data: b,
+    });
+
+    console.log(`Created board with id: ${board.id}`);
   }
   console.log(`Seeding finished.`);
 }
