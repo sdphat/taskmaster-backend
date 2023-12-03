@@ -35,10 +35,12 @@ model BoardColumn {
   Board            Board             @relation(fields: [boardId], references: [id])
   BoardColumnCards BoardColumnCard[]
   boardId          Int
+  columnIdx        Int
 }
 
 model BoardColumnCard {
   id            Int                      @id @default(autoincrement())
+  cardIdx       Int
   summary       String
   description   String                   @db.LongText
   Labels        BoardLabel[]

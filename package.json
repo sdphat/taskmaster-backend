@@ -21,7 +21,8 @@
     "migrate:dev": "npm run env:dev -- prisma migrate dev",
     "migrate:prod": "npm run env:dev -- prisma migrate deploy",
     "env:dev": "dotenv -e .env.development -- cross-env NODE_ENV=development",
-    "env:prod": "dotenv -e .env -- cross-env NODE_ENV=production"
+    "env:prod": "dotenv -e .env -- cross-env NODE_ENV=production",
+    "seed:dev": "npm run env:dev -- npx prisma db push --force-reset && npm run env:dev -- npx prisma db seed"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

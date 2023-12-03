@@ -18,12 +18,14 @@ export class BoardService {
             id: true,
             BoardColumnCards: {
               select: {
+                id: true,
                 Comments: true,
                 description: true,
                 dueDate: true,
                 Labels: true,
                 Members: true,
                 summary: true,
+                cardIdx: true,
               },
             },
           },

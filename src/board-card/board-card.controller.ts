@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Request } from '@nestjs/common';
 import { BoardCardCreateDto } from './dto/board-card-create.dto';
 import { BoardCardService } from './board-card.service';
 import { BoardCardReturnCreate } from './dto/board-card-return-create.dto';
+import { BoardCardMoveDto } from './dto/board-card-move.dto';
 
 @Controller('board-card')
 export class BoardCardController {
@@ -12,5 +13,13 @@ export class BoardCardController {
     @Body() data: BoardCardCreateDto,
   ): Promise<BoardCardReturnCreate> {
     return this.boardCardService.create(data);
+  }
+
+  @Post('move')
+  async move(@Body() data: BoardCardMoveDto, @Request() req) {
+    return this.boardCardService.moveBoardCard({
+      ...data,
+      userId: req.user.userId,
+    });
   }
 }
