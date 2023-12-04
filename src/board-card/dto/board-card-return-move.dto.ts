@@ -1,5 +1,5 @@
 import { BoardColumnCard } from '../../types/board';
 
-export class BoardCardReturnCreate extends BoardColumnCard {
+export class BoardCardReturnMove extends BoardColumnCard {
   boardColumnId: number;
 }

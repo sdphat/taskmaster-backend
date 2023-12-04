@@ -49,6 +49,11 @@ export class BoardCardService {
           summary: true,
           boardColumnId: true,
           cardIdx: true,
+          Comments: true,
+          description: true,
+          dueDate: true,
+          Labels: true,
+          Members: true,
         },
       });
       return newCard;
@@ -104,6 +109,17 @@ export class BoardCardService {
       where: {
         boardColumnId: data.toColumn,
         cardIdx: data.toIdx,
+      },
+      select: {
+        id: true,
+        summary: true,
+        boardColumnId: true,
+        cardIdx: true,
+        Comments: true,
+        description: true,
+        dueDate: true,
+        Labels: true,
+        Members: true,
       },
     });
 

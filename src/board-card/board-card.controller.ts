@@ -3,6 +3,7 @@ import { BoardCardCreateDto } from './dto/board-card-create.dto';
 import { BoardCardService } from './board-card.service';
 import { BoardCardReturnCreate } from './dto/board-card-return-create.dto';
 import { BoardCardMoveDto } from './dto/board-card-move.dto';
+import { BoardCardReturnMove } from './dto/board-card-return-move.dto';
 
 @Controller('board-card')
 export class BoardCardController {
@@ -16,10 +17,13 @@ export class BoardCardController {
   }
 
   @Post('move')
-  async move(@Body() data: BoardCardMoveDto, @Request() req) {
+  async move(
+    @Body() data: BoardCardMoveDto,
+    @Request() req,
+  ): Promise<BoardCardReturnMove> {
     return this.boardCardService.moveBoardCard({
       ...data,
-      userId: req.user.userId,
+      userId: req.user.id,
     });
   }
 }
