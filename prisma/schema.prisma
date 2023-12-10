@@ -62,6 +62,7 @@ model BoardLabel {
   BoardColumnCard   BoardColumnCard? @relation(fields: [boardColumnCardId], references: [id])
   boardColumnCardId Int?
 
+  @@unique([boardId, color], name: "BoardColorUnique")
   @@map("BoardLabels")
 }
 

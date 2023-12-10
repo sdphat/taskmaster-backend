@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { BoardColumnCard, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
+import { Label } from '../types/board';
 
 export interface MoveBoardCardInput {
   fromIdx: number;
@@ -8,6 +9,13 @@ export interface MoveBoardCardInput {
   toIdx: number;
   toColumn: number;
   userId: number;
+}
+
+export interface BoardCardUpdateData {
+  description?: string;
+  summary?: string;
+  dueDate?: Date;
+  labels?: Pick<Label, 'color' | 'name'>[];
 }
 
 export const cardSelectFields = {
@@ -129,5 +137,51 @@ export class BoardCardService {
     });
 
     return card;
+  }
+  async update(id: BoardColumnCard['id'], data: BoardCardUpdateData) {
+    const card = await this.prismaService.boardColumnCard.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        summary: true,
+        description: true,
+        dueDate: true,
+        BoardColumn: {
+          select: {
+            boardId: true,
+          },
+        },
+      },
+    });
+
+    if (!card) {
+      throw new ForbiddenException();
+    }
+
+    return this.prismaService.boardColumnCard.update({
+      where: { id },
+      data: {
+        summary: data.summary ?? card.summary,
+        description: data.description ?? card.description,
+        dueDate: data.dueDate ?? card.dueDate,
+        Labels: {
+          connectOrCreate: (data.labels ?? []).map((label) => ({
+            create: {
+              color: label.color,
+              name: label.name,
+              boardId: card.BoardColumn.boardId,
+            },
+            where: {
+              BoardColorUnique: {
+                boardId: card.BoardColumn.boardId,
+                color: label.color,
+              },
+            },
+          })),
+        },
+      },
+      select: cardSelectFields,
+    });
   }
 }
