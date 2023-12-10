@@ -28,7 +28,7 @@ class RefreshTokenUser {
   @IsString()
   email: string;
   @IsString()
-  password: string;
+  avatarUrl: string;
 }
 
 export class UserPublicBriefInfo {
@@ -54,7 +54,11 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+    };
     return {
       access_token: await this.accessTokenJwtService.generate(payload),
       refresh_token: await this.refreshTokenJwtService.generate(payload),
@@ -73,6 +77,8 @@ export class AuthService {
 
     const createdUser: User = await this.usersService.create({
       ...registerInfo,
+      avatarUrl:
+        'https://st3.depositphotos.com/3271841/13147/i/450/depositphotos_131477174-stock-photo-simple-colorful-gradient-light-blurred.jpg',
       password: await bcrypt.hash(
         registerInfo.password,
         +process.env.SALT_ROUNDS,
@@ -83,7 +89,11 @@ export class AuthService {
       throw new BadRequestException();
     }
 
-    const payload = { sub: createdUser.id, email: createdUser.email };
+    const payload = {
+      sub: createdUser.id,
+      email: createdUser.email,
+      avatarUrl: createdUser.avatarUrl,
+    };
     return {
       access_token: await this.accessTokenJwtService.generate(payload),
       refresh_token: await this.refreshTokenJwtService.generate(payload),
@@ -99,7 +109,11 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: userInfo.sub, email: userInfo.email };
+    const payload = {
+      sub: userInfo.sub,
+      email: userInfo.email,
+      avatarUrl: userInfo.avatarUrl,
+    };
     return {
       access_token: await this.accessTokenJwtService.generate(payload),
     };
@@ -111,6 +125,7 @@ export class AuthService {
       {
         email: true,
         fullName: true,
+        avatarUrl: true,
       },
     );
 

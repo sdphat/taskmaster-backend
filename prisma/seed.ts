@@ -9,27 +9,37 @@ const userData: Prisma.UserCreateInput[] = [
     fullName: 'Alice Chau',
     email: 'alicechau@gmail.com',
     password: hashSync('12345678', saltRounds),
+    avatarUrl:
+      'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
   },
   {
     fullName: 'Harris Houston',
     email: 'harris@gmail.com',
     password: hashSync('12345678', saltRounds),
+    avatarUrl:
+      'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
   },
   {
     fullName: 'Hamza Eaton',
     email: 'hamza@gmail.com',
     password: hashSync('12345678', saltRounds),
+    avatarUrl:
+      'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
   },
   {
     fullName: 'Phat Sau',
     email: 'saudaiphat@gmail.com',
     password: hashSync('12345678', saltRounds),
+    avatarUrl:
+      'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
   },
 ];
 
 const boardData: Prisma.BoardCreateInput[] = [
   {
     name: 'Thundermail',
+    backgroundUrl:
+      'https://st3.depositphotos.com/3271841/13147/i/450/depositphotos_131477174-stock-photo-simple-colorful-gradient-light-blurred.jpg',
     BoardLabels: {
       create: [
         {

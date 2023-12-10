@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma.service';
 
 export interface MoveBoardCardInput {
   fromIdx: number;
@@ -9,6 +9,31 @@ export interface MoveBoardCardInput {
   toColumn: number;
   userId: number;
 }
+
+export const cardSelectFields = {
+  id: true,
+  Comments: {
+    select: {
+      content: true,
+      Creator: {
+        select: {
+          id: true,
+          avatarUrl: true,
+          email: true,
+          fullName: true,
+        },
+      },
+      id: true,
+    },
+  },
+  description: true,
+  dueDate: true,
+  Labels: true,
+  Members: true,
+  summary: true,
+  cardIdx: true,
+  boardColumnId: true,
+} satisfies Prisma.BoardColumnCardSelect;
 
 @Injectable()
 export class BoardCardService {
@@ -44,17 +69,7 @@ export class BoardCardService {
           description: '',
           cardIdx: nextCardIdx,
         },
-        select: {
-          id: true,
-          summary: true,
-          boardColumnId: true,
-          cardIdx: true,
-          Comments: true,
-          description: true,
-          dueDate: true,
-          Labels: true,
-          Members: true,
-        },
+        select: cardSelectFields,
       });
       return newCard;
     } catch (err) {
@@ -110,17 +125,7 @@ export class BoardCardService {
         boardColumnId: data.toColumn,
         cardIdx: data.toIdx,
       },
-      select: {
-        id: true,
-        summary: true,
-        boardColumnId: true,
-        cardIdx: true,
-        Comments: true,
-        description: true,
-        dueDate: true,
-        Labels: true,
-        Members: true,
-      },
+      select: cardSelectFields,
     });
 
     return card;

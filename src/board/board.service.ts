@@ -12,6 +12,7 @@ export class BoardService {
       select: {
         id: true,
         name: true,
+        backgroundUrl: true,
         BoardColumns: {
           select: {
             name: true,
@@ -19,7 +20,20 @@ export class BoardService {
             BoardColumnCards: {
               select: {
                 id: true,
-                Comments: true,
+                Comments: {
+                  select: {
+                    content: true,
+                    Creator: {
+                      select: {
+                        id: true,
+                        avatarUrl: true,
+                        email: true,
+                        fullName: true,
+                      },
+                    },
+                    id: true,
+                  },
+                },
                 description: true,
                 dueDate: true,
                 Labels: true,
@@ -38,6 +52,7 @@ export class BoardService {
                 id: true,
                 email: true,
                 fullName: true,
+                avatarUrl: true,
               },
             },
             memberRole: true,

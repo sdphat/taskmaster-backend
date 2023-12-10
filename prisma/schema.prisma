@@ -15,6 +15,7 @@ model User {
   email                   String                   @unique
   password                String
   fullName                String
+  avatarUrl               String                   @db.MediumText
   BoardMembers            BoardMember[]
   BoardColumnCard         BoardColumnCard?         @relation(fields: [boardColumnCardId], references: [id])
   boardColumnCardId       Int?
@@ -22,11 +23,12 @@ model User {
 }
 
 model Board {
-  id           Int           @id @default(autoincrement())
-  name         String
-  BoardMembers BoardMember[]
-  BoardColumns BoardColumn[]
-  BoardLabels  BoardLabel[]
+  id            Int           @id @default(autoincrement())
+  name          String
+  backgroundUrl String        @db.MediumText
+  BoardMembers  BoardMember[]
+  BoardColumns  BoardColumn[]
+  BoardLabels   BoardLabel[]
 }
 
 model BoardColumn {

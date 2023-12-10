@@ -1,6 +1,7 @@
 export class Board {
   id: number;
   name: string;
+  backgroundUrl: string;
   BoardColumns: BoardColumn[];
   BoardLabels: Label[];
   BoardMembers: BoardMember[];
@@ -26,8 +27,7 @@ export class BoardColumnCard {
 export class Comment {
   id: number;
   content: string;
-  creatorId: number;
-  boardColumnCardId: number;
+  Creator: Member;
 }
 
 export class Label {
@@ -48,4 +48,5 @@ export class Member {
   id: number;
   email: string;
   fullName: string;
+  avatarUrl: string;
 }
