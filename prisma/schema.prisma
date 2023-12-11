@@ -69,6 +69,7 @@ model BoardLabel {
 model BoardColumnCardComment {
   id                Int             @id @default(autoincrement())
   content           String          @db.LongText
+  createdDate       DateTime
   Creator           User            @relation(fields: [creatorId], references: [id])
   creatorId         Int
   BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id])

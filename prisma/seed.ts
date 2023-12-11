@@ -93,6 +93,7 @@ const boardData: Prisma.BoardCreateInput[] = [
                   create: {
                     content: 'What other methods do we need to add in as well?',
                     creatorId: 2,
+                    createdDate: new Date(2023, 11, 9, 9, 14, 32),
                   },
                 },
                 Labels: {
