@@ -21,8 +21,12 @@ export class BoardService {
               select: {
                 id: true,
                 Comments: {
+                  orderBy: {
+                    id: 'desc',
+                  },
                   select: {
                     content: true,
+                    createdDate: true,
                     Creator: {
                       select: {
                         id: true,

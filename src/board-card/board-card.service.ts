@@ -21,8 +21,12 @@ export interface BoardCardUpdateData {
 export const cardSelectFields = {
   id: true,
   Comments: {
+    orderBy: {
+      id: 'desc',
+    },
     select: {
       content: true,
+      createdDate: true,
       Creator: {
         select: {
           id: true,
