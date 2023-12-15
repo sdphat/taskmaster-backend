@@ -1,7 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { BoardColumnCard, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
-import { Label } from '../types/board';
 
 export interface MoveBoardCardInput {
   fromIdx: number;
@@ -15,7 +14,7 @@ export interface BoardCardUpdateData {
   description?: string;
   summary?: string;
   dueDate?: Date;
-  labels?: Pick<Label, 'color' | 'name'>[];
+  labels?: number[];
 }
 
 export const cardSelectFields = {
@@ -170,18 +169,8 @@ export class BoardCardService {
         description: data.description ?? card.description,
         dueDate: data.dueDate ?? card.dueDate,
         Labels: {
-          connectOrCreate: (data.labels ?? []).map((label) => ({
-            create: {
-              color: label.color,
-              name: label.name,
-              boardId: card.BoardColumn.boardId,
-            },
-            where: {
-              BoardColorUnique: {
-                boardId: card.BoardColumn.boardId,
-                color: label.color,
-              },
-            },
+          connect: (data.labels ?? []).map((labelId) => ({
+            id: labelId,
           })),
         },
       },

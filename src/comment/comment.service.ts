@@ -39,8 +39,17 @@ export class CommentService {
           },
         },
         select: {
+          Creator: {
+            select: {
+              id: true,
+              email: true,
+              fullName: true,
+              avatarUrl: true,
+            },
+          },
           id: true,
           content: true,
+          boardColumnCardId: true,
           createdDate: true,
         },
       });

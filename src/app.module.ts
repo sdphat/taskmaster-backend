@@ -5,6 +5,7 @@ import { ConfigModule } from './config/config.module';
 import { BoardModule } from './board/board.module';
 import { BoardCardModule } from './board-card/board-card.module';
 import { CommentModule } from './comment/comment.module';
+import { CardLabelModule } from './card-label/card-label.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CommentModule } from './comment/comment.module';
     BoardModule,
     BoardCardModule,
     CommentModule,
+    CardLabelModule,
   ],
 })
 export class AppModule {}
