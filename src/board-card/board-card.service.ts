@@ -29,18 +29,42 @@ export const cardSelectFields = {
       Creator: {
         select: {
           id: true,
-          avatarUrl: true,
-          email: true,
-          fullName: true,
+          User: {
+            select: {
+              id: true,
+              avatarUrl: true,
+              email: true,
+              fullName: true,
+            },
+          },
+          memberRole: true,
         },
       },
       id: true,
     },
   },
+  BoardColumnCardMembers: {
+    select: {
+      boardMemberId: true,
+      Member: {
+        select: {
+          id: true,
+          memberRole: true,
+          User: {
+            select: {
+              id: true,
+              avatarUrl: true,
+              email: true,
+              fullName: true,
+            },
+          },
+        },
+      },
+    },
+  },
   description: true,
   dueDate: true,
   Labels: true,
-  Members: true,
   summary: true,
   cardIdx: true,
   boardColumnId: true,

@@ -13,9 +13,22 @@ export class CommentService {
   constructor(private prismaService: PrismaService) {}
 
   async create({ userEmail, cardId, content, createdDate }: CreateCommentArgs) {
-    const user = await this.prismaService.user.findFirst({
+    const member = await this.prismaService.boardMember.findFirst({
       where: {
-        email: userEmail,
+        User: {
+          email: userEmail,
+        },
+        Board: {
+          BoardColumns: {
+            some: {
+              BoardColumnCards: {
+                some: {
+                  id: cardId,
+                },
+              },
+            },
+          },
+        },
       },
       select: {
         id: true,
@@ -29,7 +42,7 @@ export class CommentService {
           createdDate: createdDate,
           Creator: {
             connect: {
-              id: user.id,
+              id: member.id,
             },
           },
           BoardColumnCard: {
@@ -42,9 +55,13 @@ export class CommentService {
           Creator: {
             select: {
               id: true,
-              email: true,
-              fullName: true,
-              avatarUrl: true,
+              User: {
+                select: {
+                  email: true,
+                  fullName: true,
+                  avatarUrl: true,
+                },
+              },
             },
           },
           id: true,

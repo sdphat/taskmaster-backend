@@ -1,3 +1,5 @@
+import { BoardRole } from '@prisma/client';
+
 export class Board {
   id: number;
   name: string;
@@ -20,14 +22,15 @@ export class BoardColumnCard {
   description: string;
   dueDate: null | Date;
   Labels: Label[];
-  Members: any[];
   summary: string;
+  BoardColumnCardMembers: BoardColumnCardMember[];
 }
 
 export class Comment {
   id: number;
   content: string;
-  Creator: Member;
+  createdDate: Date;
+  Creator: BoardMember;
 }
 
 export class Label {
@@ -39,14 +42,19 @@ export class Label {
 }
 
 export class BoardMember {
-  Member: Member;
-  memberRole: string;
-  memberId: number;
+  id: number;
+  User: User;
+  memberRole: BoardRole;
 }
 
-export class Member {
+export class User {
   id: number;
   email: string;
   fullName: string;
   avatarUrl: string;
+}
+
+export class BoardColumnCardMember {
+  boardMemberId: number;
+  Member: BoardMember;
 }

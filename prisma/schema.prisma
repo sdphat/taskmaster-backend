@@ -11,15 +11,12 @@ datasource db {
 }
 
 model User {
-  id                      Int                      @id @default(autoincrement())
-  email                   String                   @unique
-  password                String
-  fullName                String
-  avatarUrl               String                   @db.MediumText
-  BoardMembers            BoardMember[]
-  BoardColumnCard         BoardColumnCard?         @relation(fields: [boardColumnCardId], references: [id])
-  boardColumnCardId       Int?
-  BoardColumnCardComments BoardColumnCardComment[]
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
+  fullName    String
+  avatarUrl   String        @db.MediumText
+  BoardMember BoardMember[]
 }
 
 model Board {
@@ -41,16 +38,16 @@ model BoardColumn {
 }
 
 model BoardColumnCard {
-  id            Int                      @id @default(autoincrement())
-  cardIdx       Int
-  summary       String
-  description   String                   @db.LongText
-  Labels        BoardLabel[]
-  Members       User[]
-  Comments      BoardColumnCardComment[]
-  dueDate       DateTime?
-  BoardColumn   BoardColumn?             @relation(fields: [boardColumnId], references: [id])
-  boardColumnId Int?
+  id                     Int                      @id @default(autoincrement())
+  cardIdx                Int
+  summary                String
+  description            String                   @db.LongText
+  Labels                 BoardLabel[]
+  Comments               BoardColumnCardComment[]
+  dueDate                DateTime?
+  BoardColumn            BoardColumn?             @relation(fields: [boardColumnId], references: [id])
+  boardColumnId          Int?
+  BoardColumnCardMembers BoardColumnCardMembers[]
 }
 
 model BoardLabel {
@@ -69,20 +66,33 @@ model BoardColumnCardComment {
   id                Int             @id @default(autoincrement())
   content           String          @db.LongText
   createdDate       DateTime
-  Creator           User            @relation(fields: [creatorId], references: [id])
+  Creator           BoardMember     @relation(fields: [creatorId], references: [id])
   creatorId         Int
   BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id])
   boardColumnCardId Int
 }
 
-model BoardMember {
-  Member     User      @relation(fields: [memberId], references: [id])
-  memberId   Int
-  memberRole BoardRole
-  Board      Board     @relation(fields: [boardId], references: [id])
-  boardId    Int
+model BoardColumnCardMembers {
+  Member            BoardMember     @relation(fields: [boardMemberId], references: [id])
+  boardMemberId     Int
+  BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id])
+  boardColumnCardId Int
 
-  @@id([memberId, boardId])
+  @@id([boardMemberId, boardColumnCardId])
+}
+
+model BoardMember {
+  id                     Int                      @id @default(autoincrement())
+  User                   User                     @relation(fields: [userId], references: [id])
+  userId                 Int
+  memberRole             BoardRole
+  Board                  Board                    @relation(fields: [boardId], references: [id])
+  boardId                Int
+  boardColumnCardId      Int?
+  BoardColumnCardComment BoardColumnCardComment[]
+  BoardColumnCardMembers BoardColumnCardMembers[]
+
+  @@unique([userId, boardId])
 }
 
 enum BoardRole {

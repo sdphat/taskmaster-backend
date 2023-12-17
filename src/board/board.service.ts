@@ -1,7 +1,85 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma.service';
 
+const boardSelect = {
+  id: true,
+  name: true,
+  backgroundUrl: true,
+  BoardColumns: {
+    select: {
+      name: true,
+      id: true,
+      BoardColumnCards: {
+        select: {
+          id: true,
+          Comments: {
+            orderBy: {
+              id: 'desc',
+            },
+            select: {
+              content: true,
+              createdDate: true,
+              Creator: {
+                select: {
+                  User: {
+                    select: {
+                      id: true,
+                      avatarUrl: true,
+                      email: true,
+                      fullName: true,
+                    },
+                  },
+                  memberRole: true,
+                },
+              },
+              id: true,
+            },
+          },
+          BoardColumnCardMembers: {
+            select: {
+              boardMemberId: true,
+              Member: {
+                select: {
+                  id: true,
+                  memberRole: true,
+                  User: {
+                    select: {
+                      id: true,
+                      avatarUrl: true,
+                      email: true,
+                      fullName: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          description: true,
+          dueDate: true,
+          Labels: true,
+          summary: true,
+          cardIdx: true,
+        },
+      },
+    },
+  },
+  BoardLabels: true,
+  BoardMembers: {
+    select: {
+      User: {
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          avatarUrl: true,
+        },
+      },
+      memberRole: true,
+      id: true,
+    },
+  },
+} satisfies Prisma.BoardSelect;
 @Injectable()
 export class BoardService {
   constructor(private prismaService: PrismaService) {}
@@ -9,61 +87,7 @@ export class BoardService {
   async getBoard(where: Prisma.BoardWhereInput) {
     const board = await this.prismaService.board.findFirst({
       where,
-      select: {
-        id: true,
-        name: true,
-        backgroundUrl: true,
-        BoardColumns: {
-          select: {
-            name: true,
-            id: true,
-            BoardColumnCards: {
-              select: {
-                id: true,
-                Comments: {
-                  orderBy: {
-                    id: 'desc',
-                  },
-                  select: {
-                    content: true,
-                    createdDate: true,
-                    Creator: {
-                      select: {
-                        id: true,
-                        avatarUrl: true,
-                        email: true,
-                        fullName: true,
-                      },
-                    },
-                    id: true,
-                  },
-                },
-                description: true,
-                dueDate: true,
-                Labels: true,
-                Members: true,
-                summary: true,
-                cardIdx: true,
-              },
-            },
-          },
-        },
-        BoardLabels: true,
-        BoardMembers: {
-          select: {
-            Member: {
-              select: {
-                id: true,
-                email: true,
-                fullName: true,
-                avatarUrl: true,
-              },
-            },
-            memberRole: true,
-            memberId: true,
-          },
-        },
-      },
+      select: boardSelect,
     });
 
     if (!board) {

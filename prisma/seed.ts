@@ -56,6 +56,34 @@ const boardData: Prisma.BoardCreateInput[] = [
         },
       ],
     },
+    BoardMembers: {
+      create: [
+        {
+          memberRole: 'ADMIN',
+          User: {
+            connect: {
+              id: 4,
+            },
+          },
+        },
+        {
+          memberRole: 'COLLABORATOR',
+          User: {
+            connect: {
+              id: 1,
+            },
+          },
+        },
+        {
+          memberRole: 'COLLABORATOR',
+          User: {
+            connect: {
+              id: 2,
+            },
+          },
+        },
+      ],
+    },
     BoardColumns: {
       create: [
         {
@@ -89,13 +117,6 @@ const boardData: Prisma.BoardCreateInput[] = [
                 summary: 'Support login with google',
                 description: 'Support login with google',
                 cardIdx: 0,
-                Comments: {
-                  create: {
-                    content: 'What other methods do we need to add in as well?',
-                    creatorId: 2,
-                    createdDate: new Date(2023, 11, 9, 9, 14, 32),
-                  },
-                },
                 Labels: {
                   connect: [
                     {
@@ -108,34 +129,6 @@ const boardData: Prisma.BoardCreateInput[] = [
                 },
               },
             ],
-          },
-        },
-      ],
-    },
-    BoardMembers: {
-      create: [
-        {
-          memberRole: 'ADMIN',
-          Member: {
-            connect: {
-              id: 4,
-            },
-          },
-        },
-        {
-          memberRole: 'COLLABORATOR',
-          Member: {
-            connect: {
-              id: 1,
-            },
-          },
-        },
-        {
-          memberRole: 'COLLABORATOR',
-          Member: {
-            connect: {
-              id: 2,
-            },
           },
         },
       ],
