@@ -79,7 +79,7 @@ export class MemberService {
           boardMemberId: memberId,
         },
         select: {
-          boardColumnCardId: true,
+          boardMemberId: true,
           Member: {
             select: {
               memberRole: true,
