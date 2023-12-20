@@ -27,11 +27,6 @@ export class MailService {
       {
         params: {
           apikey: this.API_KEY,
-          // subject: 'First email',
-          // from: 'sdphat175@gmail.com',
-          // to: 'saudaiphat@gmail.com',
-          // bodyHtml: 'Hello from elasticemail',
-          // isTransactional: true,
           ...options,
         },
       },

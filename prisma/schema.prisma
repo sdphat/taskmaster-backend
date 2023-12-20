@@ -88,7 +88,6 @@ model BoardMember {
   memberRole             BoardRole
   Board                  Board                    @relation(fields: [boardId], references: [id])
   boardId                Int
-  boardColumnCardId      Int?
   BoardColumnCardComment BoardColumnCardComment[]
   BoardColumnCardMembers BoardColumnCardMembers[]
 
