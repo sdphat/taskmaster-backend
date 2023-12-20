@@ -1,11 +1,20 @@
-import { Body, Controller, Post, Put, Request } from '@nestjs/common';
-import { BoardCardCreateDto } from './dto/board-card-create.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Request,
+} from '@nestjs/common';
 import { BoardCardService } from './board-card.service';
-import { BoardCardReturnCreate } from './dto/board-card-return-create.dto';
+import { BoardCardCreateDto } from './dto/board-card-create.dto';
 import { BoardCardMoveDto } from './dto/board-card-move.dto';
+import { BoardCardReturnCreate } from './dto/board-card-return-create.dto';
 import { BoardCardReturnMove } from './dto/board-card-return-move.dto';
-import { BoardCardUpdateDto } from './dto/board-card-update.dto';
 import { BoardCardReturnUpdate } from './dto/board-card-return-update.dto';
+import { BoardCardUpdateDto } from './dto/board-card-update.dto';
 
 @Controller('board-card')
 export class BoardCardController {
@@ -23,6 +32,13 @@ export class BoardCardController {
     @Body() data: BoardCardUpdateDto,
   ): Promise<BoardCardReturnUpdate> {
     return this.boardCardService.update(data.cardId, data);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) cardId: number) {
+    return this.boardCardService.delete({
+      cardId,
+    });
   }
 
   @Post('move')

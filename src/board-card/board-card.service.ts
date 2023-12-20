@@ -70,6 +70,10 @@ export const cardSelectFields = {
   boardColumnId: true,
 } satisfies Prisma.BoardColumnCardSelect;
 
+export interface DeleteCardArgs {
+  cardId: number;
+}
+
 @Injectable()
 export class BoardCardService {
   constructor(private prismaService: PrismaService) {}
@@ -107,6 +111,18 @@ export class BoardCardService {
         select: cardSelectFields,
       });
       return newCard;
+    } catch (err) {
+      throw new ForbiddenException();
+    }
+  }
+
+  async delete(data: DeleteCardArgs) {
+    try {
+      return await this.prismaService.boardColumnCard.delete({
+        where: {
+          id: data.cardId,
+        },
+      });
     } catch (err) {
       throw new ForbiddenException();
     }
