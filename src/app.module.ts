@@ -8,6 +8,7 @@ import { CommentModule } from './comment/comment.module';
 import { CardLabelModule } from './card-label/card-label.module';
 import { MemberModule } from './member/member.module';
 import { MailModule } from './mail/mail.module';
+import { BoardColumnModule } from './board-column/board-column.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MailModule } from './mail/mail.module';
     CardLabelModule,
     MemberModule,
     MailModule,
+    BoardColumnModule,
   ],
 })
 export class AppModule {}

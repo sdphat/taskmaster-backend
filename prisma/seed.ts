@@ -40,93 +40,136 @@ const boardData: Prisma.BoardCreateInput[] = [
     name: 'Thundermail',
     backgroundUrl:
       'https://st3.depositphotos.com/3271841/13147/i/450/depositphotos_131477174-stock-photo-simple-colorful-gradient-light-blurred.jpg',
-    BoardLabels: {
+  },
+];
+
+const boardLabels: Prisma.BoardLabelCreateInput[] = [
+  {
+    Board: {
+      connect: {
+        id: 1,
+      },
+    },
+    color: '#0062FF',
+    name: 'Low priority',
+  },
+  {
+    Board: {
+      connect: {
+        id: 1,
+      },
+    },
+    color: '#FFC100',
+    name: 'Medium priority',
+  },
+  {
+    Board: {
+      connect: {
+        id: 1,
+      },
+    },
+    color: '#FF003B',
+    name: 'High priority',
+  },
+];
+
+const boardMembers: Prisma.BoardMemberCreateInput[] = [
+  {
+    Board: {
+      connect: {
+        id: 1,
+      },
+    },
+    memberRole: 'ADMIN',
+    User: {
+      connect: {
+        id: 4,
+      },
+    },
+  },
+  {
+    Board: {
+      connect: { id: 1 },
+    },
+    memberRole: 'COLLABORATOR',
+    User: {
+      connect: {
+        id: 1,
+      },
+    },
+  },
+  {
+    Board: {
+      connect: { id: 1 },
+    },
+    memberRole: 'COLLABORATOR',
+    User: {
+      connect: {
+        id: 2,
+      },
+    },
+  },
+];
+
+const boardColumns: Prisma.BoardColumnCreateInput[] = [
+  {
+    name: 'Sprint 1',
+    columnIdx: 0,
+    Board: {
+      connect: {
+        id: 1,
+      },
+    },
+    creator: {
+      connect: {
+        id: 1,
+      },
+    },
+    BoardColumnCards: {
       create: [
         {
-          color: '#0062FF',
-          name: 'Low priority',
+          summary: 'Create login page',
+          description:
+            'Login page must include email field, password field, login button and a link to register page.',
+          dueDate: new Date(2023, 10, 20),
+          cardIdx: 0,
         },
         {
-          color: '#FFC100',
-          name: 'Medium priority',
-        },
-        {
-          color: '#FF003B',
-          name: 'High priority',
+          summary: 'Create register page',
+          description:
+            'Register page must include email, full name, password field, register button and a link to login page.',
+          dueDate: new Date(2023, 10, 22),
+          cardIdx: 1,
         },
       ],
     },
-    BoardMembers: {
-      create: [
-        {
-          memberRole: 'ADMIN',
-          User: {
-            connect: {
-              id: 4,
-            },
-          },
-        },
-        {
-          memberRole: 'COLLABORATOR',
-          User: {
-            connect: {
-              id: 1,
-            },
-          },
-        },
-        {
-          memberRole: 'COLLABORATOR',
-          User: {
-            connect: {
-              id: 2,
-            },
-          },
-        },
-      ],
+  },
+  {
+    name: 'Sprint 2',
+    columnIdx: 1,
+    Board: {
+      connect: {
+        id: 1,
+      },
     },
-    BoardColumns: {
+    creator: {
+      connect: {
+        id: 1,
+      },
+    },
+    BoardColumnCards: {
       create: [
         {
-          name: 'Sprint 1',
-          columnIdx: 0,
-          BoardColumnCards: {
-            create: [
+          summary: 'Support login with google',
+          description: 'Support login with google',
+          cardIdx: 0,
+          Labels: {
+            connect: [
               {
-                summary: 'Create login page',
-                description:
-                  'Login page must include email field, password field, login button and a link to register page.',
-                dueDate: new Date(2023, 10, 20),
-                cardIdx: 0,
+                id: 1,
               },
               {
-                summary: 'Create register page',
-                description:
-                  'Register page must include email, full name, password field, register button and a link to login page.',
-                dueDate: new Date(2023, 10, 22),
-                cardIdx: 1,
-              },
-            ],
-          },
-        },
-        {
-          name: 'Sprint 2',
-          columnIdx: 1,
-          BoardColumnCards: {
-            create: [
-              {
-                summary: 'Support login with google',
-                description: 'Support login with google',
-                cardIdx: 0,
-                Labels: {
-                  connect: [
-                    {
-                      id: 1,
-                    },
-                    {
-                      id: 2,
-                    },
-                  ],
-                },
+                id: 2,
               },
             ],
           },
@@ -151,6 +194,27 @@ async function main() {
     });
 
     console.log(`Created board with id: ${board.id}`);
+  }
+
+  for (const l of boardLabels) {
+    const label = await prisma.boardLabel.create({
+      data: l,
+    });
+    console.log(`Created label with id: ${label.id}`);
+  }
+
+  for (const m of boardMembers) {
+    const member = await prisma.boardMember.create({
+      data: m,
+    });
+    console.log(`Created label with id: ${member.id}`);
+  }
+
+  for (const col of boardColumns) {
+    const column = await prisma.boardColumn.create({
+      data: col,
+    });
+    console.log(`Created label with id: ${column.id}`);
   }
   console.log(`Seeding finished.`);
 }

@@ -33,8 +33,10 @@ model BoardColumn {
   name             String
   Board            Board             @relation(fields: [boardId], references: [id])
   BoardColumnCards BoardColumnCard[]
+  creator          BoardMember       @relation(fields: [creatorId], references: [id])
   boardId          Int
   columnIdx        Int
+  creatorId        Int
 }
 
 model BoardColumnCard {
@@ -90,6 +92,7 @@ model BoardMember {
   boardId                Int
   BoardColumnCardComment BoardColumnCardComment[]
   BoardColumnCardMembers BoardColumnCardMembers[]
+  BoardColumn            BoardColumn[]
 
   @@unique([userId, boardId])
 }
