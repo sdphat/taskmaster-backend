@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  Request,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { BoardColumnService } from './board-column.service';
 import { CreateBoardColumnDto } from './dto/create-board-column.dto';
 import { Request as ExpressRequest } from 'express';
@@ -16,5 +24,10 @@ export class BoardColumnController {
       ...createBoardColumnDto,
       userId: (request as any).user.sub,
     });
+  }
+
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.boardColumnService.delete(id);
   }
 }

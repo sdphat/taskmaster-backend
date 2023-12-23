@@ -110,4 +110,16 @@ export class BoardColumnService {
       throw new ForbiddenException();
     }
   }
+
+  async delete(id: number) {
+    try {
+      return await this.prismaService.boardColumn.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (err) {
+      throw new ForbiddenException();
+    }
+  }
 }
