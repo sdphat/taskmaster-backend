@@ -38,7 +38,6 @@ export class Label {
   name: string;
   color: string;
   boardId: number;
-  boardColumnCardId: number | null;
 }
 
 export class BoardMember {

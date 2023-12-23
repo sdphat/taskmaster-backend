@@ -53,13 +53,12 @@ model BoardColumnCard {
 }
 
 model BoardLabel {
-  id                Int              @id @default(autoincrement())
-  name              String
-  color             String
-  Board             Board            @relation(fields: [boardId], references: [id])
-  boardId           Int
-  BoardColumnCard   BoardColumnCard? @relation(fields: [boardColumnCardId], references: [id])
-  boardColumnCardId Int?
+  id              Int               @id @default(autoincrement())
+  name            String
+  color           String
+  Board           Board             @relation(fields: [boardId], references: [id])
+  boardId         Int
+  BoardColumnCard BoardColumnCard[]
 
   @@map("BoardLabels")
 }
