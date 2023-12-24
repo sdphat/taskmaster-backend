@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { RefreshTokenJwtService } from './RefreshTokenJwt.service';
+import { RolesGuard } from './roles.guard';
 
 @Module({
   imports: [
@@ -23,9 +24,11 @@ import { RefreshTokenJwtService } from './RefreshTokenJwt.service';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    RolesGuard,
     PrismaService,
     AccessTokenJwtService,
     RefreshTokenJwtService,
   ],
+  exports: [RolesGuard],
 })
 export class AuthModule {}

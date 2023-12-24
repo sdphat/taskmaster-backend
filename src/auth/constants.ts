@@ -4,3 +4,7 @@ export const jwtConstants = {
   accessTokenMaxAge: process.env.ACCESS_TOKEN_MAX_AGE,
   refreshTokenMaxAge: process.env.REFRESH_TOKEN_MAX_AGE,
 };
+
+export const cookieConstants = {
+  roleCookieToken: 'role',
+};
