@@ -19,6 +19,17 @@ import { BoardService } from './board.service';
 export class BoardController {
   constructor(private boardService: BoardService) {}
 
+  @Get('all-boards')
+  async getAllBoards(
+    @Req() request: ExpressRequest,
+  ): Promise<ReturnType<typeof this.boardService.getAllBoards>> {
+    const boards = await this.boardService.getAllBoards(
+      (request as any).user.sub,
+    );
+
+    return boards;
+  }
+
   @Get(':boardId')
   async getBoard(
     @Param('boardId', ParseIntPipe) boardId: number,

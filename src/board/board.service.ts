@@ -84,6 +84,15 @@ const boardSelect = {
 export class BoardService {
   constructor(private prismaService: PrismaService) {}
 
+  async getAllBoards(userId: number) {
+    const boards = await this.prismaService.board.findMany({
+      where: { BoardMembers: { some: { userId } } },
+      select: { backgroundUrl: true, name: true, id: true },
+    });
+
+    return boards;
+  }
+
   async getBoard(where: Prisma.BoardWhereInput) {
     const board = await this.prismaService.board.findFirst({
       where,
