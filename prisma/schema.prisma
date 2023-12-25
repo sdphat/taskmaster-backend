@@ -22,7 +22,7 @@ model User {
 model Board {
   id            Int           @id @default(autoincrement())
   name          String
-  backgroundUrl String        @db.MediumText
+  backgroundUrl String?        @db.MediumText
   BoardMembers  BoardMember[]
   BoardColumns  BoardColumn[]
   BoardLabels   BoardLabel[]

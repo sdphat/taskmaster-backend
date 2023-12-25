@@ -80,6 +80,11 @@ const boardSelect = {
     },
   },
 } satisfies Prisma.BoardSelect;
+
+export interface CreateBoardArgs {
+  title: string;
+  userId: number;
+}
 @Injectable()
 export class BoardService {
   constructor(private prismaService: PrismaService) {}
@@ -103,5 +108,24 @@ export class BoardService {
       throw new NotFoundException();
     }
     return board;
+  }
+
+  async createBoard(data: CreateBoardArgs) {
+    return await this.prismaService.board.create({
+      data: {
+        name: data.title,
+        BoardMembers: {
+          create: {
+            User: {
+              connect: {
+                id: data.userId,
+              },
+            },
+            memberRole: 'ADMIN',
+          },
+        },
+      },
+      select: boardSelect,
+    });
   }
 }

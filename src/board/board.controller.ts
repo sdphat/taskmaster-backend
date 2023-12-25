@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Req,
   Res,
 } from '@nestjs/common';
@@ -14,6 +16,7 @@ import {
 import ms from 'ms';
 import { cookieConstants } from '../auth/constants';
 import { BoardService } from './board.service';
+import { CreateBoardDto } from './dto/create-board.dto';
 
 @Controller('board')
 export class BoardController {
@@ -58,5 +61,13 @@ export class BoardController {
     );
 
     return board;
+  }
+
+  @Post()
+  async create(@Body() data: CreateBoardDto, @Req() req: ExpressRequest) {
+    return this.boardService.createBoard({
+      ...data,
+      userId: (req as any).user.sub,
+    });
   }
 }
