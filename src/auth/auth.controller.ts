@@ -93,4 +93,15 @@ export class AuthController {
     this.attachAccessToken(res, access_token);
     this.attachRefreshToken(res, refresh_token);
   }
+
+  @Post('logout')
+  async logout(
+    @Request() req: ExpressRequest,
+    @Response({ passthrough: true }) res: ExpressResponse,
+  ) {
+    const cookies = Object.keys(req.cookies);
+    cookies.forEach((cookie) => {
+      res.clearCookie(cookie);
+    });
+  }
 }
