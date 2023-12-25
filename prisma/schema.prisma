@@ -31,7 +31,7 @@ model Board {
 model BoardColumn {
   id               Int               @id @default(autoincrement())
   name             String
-  Board            Board             @relation(fields: [boardId], references: [id])
+  Board            Board             @relation(fields: [boardId], references: [id], onDelete: Cascade)
   BoardColumnCards BoardColumnCard[]
   creator          BoardMember       @relation(fields: [creatorId], references: [id])
   boardId          Int
@@ -47,7 +47,7 @@ model BoardColumnCard {
   Labels                 BoardLabel[]
   Comments               BoardColumnCardComment[]
   dueDate                DateTime?
-  BoardColumn            BoardColumn?             @relation(fields: [boardColumnId], references: [id])
+  BoardColumn            BoardColumn?             @relation(fields: [boardColumnId], references: [id], onDelete: Cascade)
   boardColumnId          Int?
   BoardColumnCardMembers BoardColumnCardMembers[]
 }
@@ -56,7 +56,7 @@ model BoardLabel {
   id              Int               @id @default(autoincrement())
   name            String
   color           String
-  Board           Board             @relation(fields: [boardId], references: [id])
+  Board           Board             @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId         Int
   BoardColumnCard BoardColumnCard[]
 
@@ -69,14 +69,14 @@ model BoardColumnCardComment {
   createdDate       DateTime
   Creator           BoardMember     @relation(fields: [creatorId], references: [id])
   creatorId         Int
-  BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id])
+  BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id], onDelete: Cascade)
   boardColumnCardId Int
 }
 
 model BoardColumnCardMembers {
-  Member            BoardMember     @relation(fields: [boardMemberId], references: [id])
+  Member            BoardMember     @relation(fields: [boardMemberId], references: [id], onDelete: Cascade)
   boardMemberId     Int
-  BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id])
+  BoardColumnCard   BoardColumnCard @relation(fields: [boardColumnCardId], references: [id], onDelete: Cascade)
   boardColumnCardId Int
 
   @@id([boardMemberId, boardColumnCardId])
@@ -87,7 +87,7 @@ model BoardMember {
   User                   User                     @relation(fields: [userId], references: [id])
   userId                 Int
   memberRole             BoardRole
-  Board                  Board                    @relation(fields: [boardId], references: [id])
+  Board                  Board                    @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId                Int
   BoardColumnCardComment BoardColumnCardComment[]
   BoardColumnCardMembers BoardColumnCardMembers[]
