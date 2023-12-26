@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 
@@ -127,5 +131,13 @@ export class BoardService {
       },
       select: boardSelect,
     });
+  }
+
+  async deleteBoard(id: number) {
+    try {
+      return await this.prismaService.board.delete({ where: { id } });
+    } catch (err) {
+      throw new ForbiddenException();
+    }
   }
 }

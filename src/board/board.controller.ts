@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   Param,
@@ -8,6 +9,7 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import {
   Request as ExpressRequest,
@@ -17,6 +19,8 @@ import ms from 'ms';
 import { cookieConstants } from '../auth/constants';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('board')
 export class BoardController {
@@ -69,5 +73,12 @@ export class BoardController {
       ...data,
       userId: (req as any).user.sub,
     });
+  }
+
+  @Roles(['ADMIN'])
+  @UseGuards(RolesGuard)
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.boardService.deleteBoard(id);
   }
 }
