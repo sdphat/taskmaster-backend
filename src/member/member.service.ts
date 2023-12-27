@@ -8,9 +8,15 @@ export interface AddMemberArgs {
   memberRole: BoardRole;
 }
 
+export interface ChangeMemberRoleArgs {
+  role: BoardRole;
+  memberId: number;
+}
+
 @Injectable()
 export class MemberService {
   constructor(private prismaService: PrismaService) {}
+
   async addMemberToBoard({
     boardId,
     invitedUserId,
@@ -93,6 +99,21 @@ export class MemberService {
               },
             },
           },
+        },
+      });
+    } catch (err) {
+      throw new ForbiddenException();
+    }
+  }
+
+  async changeMemberRole(args: ChangeMemberRoleArgs) {
+    try {
+      return await this.prismaService.boardMember.update({
+        data: {
+          memberRole: args.role,
+        },
+        where: {
+          id: args.memberId,
         },
       });
     } catch (err) {

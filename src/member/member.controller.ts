@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, UseGuards } from '@nestjs/common';
 import { AddMemberToBoardDto } from './dto/add-member-to-board.dto';
 import { AddMemberToCardDto } from './dto/add-member-to-card.dto';
 import { RemoveMemberFromBoardDto } from './dto/remove-member-from-board.dto';
@@ -6,6 +6,7 @@ import { RemoveMemberFromCardDto } from './dto/remove-member-from-card.dto';
 import { MemberService } from './member.service';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { ChangeMemberRoleDto } from './dto/change-member-role.dto';
 
 @UseGuards(RolesGuard)
 @Controller('member')
@@ -25,6 +26,12 @@ export class MemberController {
       removeMemberDto.boardId,
       removeMemberDto.memberUserId,
     );
+  }
+
+  @Roles(['ADMIN'])
+  @Put('board/role')
+  changeMemberRole(@Body() changeMemberRoleDto: ChangeMemberRoleDto) {
+    return this.memberService.changeMemberRole(changeMemberRoleDto);
   }
 
   @Roles(['ADMIN', 'COLLABORATOR'])
