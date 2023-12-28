@@ -1,11 +1,11 @@
 import { BoardRole } from '@prisma/client';
-import { IsEnum, IsInt } from 'class-validator';
+import { IsEmail, IsEnum, IsInt } from 'class-validator';
 
 export class AddMemberToBoardDto {
   @IsInt()
   boardId: number;
-  @IsInt()
-  invitedUserId: number;
+  @IsEmail()
+  email: string;
   @IsEnum(BoardRole)
   memberRole: BoardRole;
 }

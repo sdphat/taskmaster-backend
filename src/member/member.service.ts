@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma.service';
 
 export interface AddMemberArgs {
   boardId: number;
-  invitedUserId: number;
+  email: string;
   memberRole: BoardRole;
 }
 
@@ -17,17 +17,21 @@ export interface ChangeMemberRoleArgs {
 export class MemberService {
   constructor(private prismaService: PrismaService) {}
 
-  async addMemberToBoard({
-    boardId,
-    invitedUserId,
-    memberRole,
-  }: AddMemberArgs) {
+  async addMemberToBoard({ boardId, email, memberRole }: AddMemberArgs) {
     try {
       return await this.prismaService.boardMember.create({
         data: {
           memberRole,
-          boardId,
-          userId: invitedUserId,
+          Board: {
+            connect: {
+              id: boardId,
+            },
+          },
+          User: {
+            connect: {
+              email,
+            },
+          },
         },
         select: {
           boardId: true,
