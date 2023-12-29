@@ -83,7 +83,7 @@ export class BoardColumnService {
       },
     });
 
-    return lastIdx;
+    return lastIdx ?? 0;
   }
 
   async create({ columnName, boardId, userId }: CreateColumnArgs) {
@@ -109,6 +109,7 @@ export class BoardColumnService {
         select: boardSelect,
       });
     } catch (err) {
+      console.log(err);
       throw new ForbiddenException();
     }
   }
