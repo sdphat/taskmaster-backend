@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { ConfigModule } from './config/config.module';
-import { BoardModule } from './board/board.module';
 import { BoardCardModule } from './board-card/board-card.module';
-import { CommentModule } from './comment/comment.module';
-import { CardLabelModule } from './card-label/card-label.module';
-import { MemberModule } from './member/member.module';
-import { MailModule } from './mail/mail.module';
 import { BoardColumnModule } from './board-column/board-column.module';
+import { BoardModule } from './board/board.module';
+import { CardLabelModule } from './card-label/card-label.module';
+import { CommentModule } from './comment/comment.module';
+import { ConfigModule } from './config/config.module';
+import { MailModule } from './mail/mail.module';
+import { MemberModule } from './member/member.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [

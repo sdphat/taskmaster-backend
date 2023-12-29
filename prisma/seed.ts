@@ -81,6 +81,7 @@ const boardMembers: Prisma.BoardMemberCreateInput[] = [
       },
     },
     memberRole: 'ADMIN',
+    hasJoined: true,
     User: {
       connect: {
         id: 4,
@@ -92,6 +93,7 @@ const boardMembers: Prisma.BoardMemberCreateInput[] = [
       connect: { id: 1 },
     },
     memberRole: 'COLLABORATOR',
+    hasJoined: true,
     User: {
       connect: {
         id: 1,
@@ -103,6 +105,7 @@ const boardMembers: Prisma.BoardMemberCreateInput[] = [
       connect: { id: 1 },
     },
     memberRole: 'COLLABORATOR',
+    hasJoined: true,
     User: {
       connect: {
         id: 2,

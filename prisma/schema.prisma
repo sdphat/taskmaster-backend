@@ -22,7 +22,7 @@ model User {
 model Board {
   id            Int           @id @default(autoincrement())
   name          String
-  backgroundUrl String?        @db.MediumText
+  backgroundUrl String?       @db.MediumText
   BoardMembers  BoardMember[]
   BoardColumns  BoardColumn[]
   BoardLabels   BoardLabel[]
@@ -89,6 +89,7 @@ model BoardMember {
   memberRole             BoardRole
   Board                  Board                    @relation(fields: [boardId], references: [id], onDelete: Cascade)
   boardId                Int
+  hasJoined              Boolean                  @default(false)
   BoardColumnCardComment BoardColumnCardComment[]
   BoardColumnCardMembers BoardColumnCardMembers[]
   BoardColumn            BoardColumn[]

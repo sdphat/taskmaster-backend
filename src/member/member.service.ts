@@ -1,7 +1,17 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { BoardRole } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
-
+import { InvitationCodeGeneratorService } from './invitation-code-generator/invitation-code-generator.service';
+import { MailService } from '../mail/mail.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import ms from 'ms';
+import { InvitationDto } from './dto/invitation.dto';
 export interface AddMemberArgs {
   boardId: number;
   email: string;
@@ -13,15 +23,70 @@ export interface ChangeMemberRoleArgs {
   memberId: number;
 }
 
+interface InvitationCacheData {
+  boardId: number;
+  email: string;
+}
+
 @Injectable()
 export class MemberService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private invitationCodeGenerator: InvitationCodeGeneratorService,
+    private mailSerivce: MailService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
+
+  async handleInvitation(invitationDto: InvitationDto) {
+    const data = await this.cacheManager.get<InvitationCacheData>(
+      invitationDto.code,
+    );
+    if (!data) {
+      throw new BadRequestException();
+    }
+
+    const foundUser = await this.prismaService.user.findFirst({
+      where: {
+        email: data.email,
+      },
+    });
+
+    // Todo: Make user register instead of throwing errors
+    if (!foundUser) {
+      throw new BadRequestException();
+    }
+
+    // Update hasJoined flag to true
+    await this.prismaService.user.update({
+      data: {
+        BoardMember: {
+          update: {
+            data: {
+              hasJoined: true,
+            },
+            where: {
+              userId_boardId: {
+                boardId: data.boardId,
+                userId: foundUser.id,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        id: foundUser.id,
+      },
+    });
+
+    return true;
+  }
 
   async addMemberToBoard({ boardId, email, memberRole }: AddMemberArgs) {
     try {
-      return await this.prismaService.boardMember.create({
+      const returnData = await this.prismaService.boardMember.create({
         data: {
           memberRole,
+          hasJoined: false,
           Board: {
             connect: {
               id: boardId,
@@ -36,6 +101,7 @@ export class MemberService {
         select: {
           boardId: true,
           memberRole: true,
+          hasJoined: true,
           id: true,
           User: {
             select: {
@@ -46,6 +112,19 @@ export class MemberService {
           },
         },
       });
+
+      const invitationCode = this.invitationCodeGenerator.generate();
+      await this.cacheManager.set(invitationCode, { email, boardId }, ms('1d'));
+
+      await this.mailSerivce.send({
+        from: this.mailSerivce.SYSTEM_EMAIL,
+        isTransactional: true,
+        to: email,
+        subject: 'Invitation to Taskmaster board',
+        bodyHtml: `<a href='http://localhost:5173/invitation?code=${invitationCode}'>Join board</a>`,
+      });
+
+      return returnData;
     } catch (err) {
       throw new ForbiddenException();
     }
@@ -93,6 +172,7 @@ export class MemberService {
           Member: {
             select: {
               memberRole: true,
+              hasJoined: true,
               id: true,
               User: {
                 select: {

@@ -35,6 +35,7 @@ const boardSelect = {
                     },
                   },
                   memberRole: true,
+                  hasJoined: true,
                 },
               },
               id: true,
@@ -47,6 +48,7 @@ const boardSelect = {
                 select: {
                   id: true,
                   memberRole: true,
+                  hasJoined: true,
                   User: {
                     select: {
                       id: true,
@@ -80,6 +82,7 @@ const boardSelect = {
         },
       },
       memberRole: true,
+      hasJoined: true,
       id: true,
     },
   },
@@ -125,6 +128,7 @@ export class BoardService {
                 id: data.userId,
               },
             },
+            hasJoined: true,
             memberRole: 'ADMIN',
           },
         },

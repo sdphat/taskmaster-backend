@@ -32,6 +32,7 @@ const boardSelect = {
                 },
               },
               memberRole: true,
+              hasJoined: true,
             },
           },
           id: true,
@@ -44,6 +45,7 @@ const boardSelect = {
             select: {
               id: true,
               memberRole: true,
+              hasJoined: true,
               User: {
                 select: {
                   id: true,

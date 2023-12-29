@@ -38,6 +38,7 @@ export const cardSelectFields = {
             },
           },
           memberRole: true,
+          hasJoined: true,
         },
       },
       id: true,
@@ -50,6 +51,7 @@ export const cardSelectFields = {
         select: {
           id: true,
           memberRole: true,
+          hasJoined: true,
           User: {
             select: {
               id: true,
