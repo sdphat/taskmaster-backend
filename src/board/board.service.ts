@@ -112,7 +112,7 @@ export class BoardService {
     });
 
     if (!board) {
-      throw new NotFoundException();
+      throw new ForbiddenException();
     }
     return board;
   }

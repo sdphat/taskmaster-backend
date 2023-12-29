@@ -48,7 +48,7 @@ export class BoardController {
       (member) => member.User.id === (request as any).user.sub,
     );
 
-    if (!currentUserMember) {
+    if (!currentUserMember || !currentUserMember.hasJoined) {
       throw new ForbiddenException();
     }
 
