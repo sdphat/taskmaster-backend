@@ -13,10 +13,17 @@ datasource db {
 model User {
   id          Int           @id @default(autoincrement())
   email       String        @unique
-  password    String
   fullName    String
   avatarUrl   String        @db.MediumText
   BoardMember BoardMember[]
+  Credential  Credential?
+}
+
+model Credential {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [email], references: [email])
+  email    String @unique
+  password String
 }
 
 model Board {

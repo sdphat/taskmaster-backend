@@ -44,12 +44,18 @@ export class AuthService {
   ) {}
 
   async signIn(email: string, password: string) {
-    const user = await this.usersService.findOne(email);
+    const user = await this.usersService.findOne(email, {
+      id: true,
+      avatarUrl: true,
+      email: true,
+      fullName: true,
+      Credential: true,
+    });
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    const passwordMatches = await compare(password, user.password);
+    const passwordMatches = await compare(password, user.Credential.password);
     if (!passwordMatches) {
       throw new UnauthorizedException();
     }
@@ -76,13 +82,18 @@ export class AuthService {
     }
 
     const createdUser: User = await this.usersService.create({
-      ...registerInfo,
+      email: registerInfo.email,
+      fullName: registerInfo.fullName,
       avatarUrl:
         'https://st3.depositphotos.com/3271841/13147/i/450/depositphotos_131477174-stock-photo-simple-colorful-gradient-light-blurred.jpg',
-      password: await bcrypt.hash(
-        registerInfo.password,
-        +process.env.SALT_ROUNDS,
-      ),
+      Credential: {
+        create: {
+          password: await bcrypt.hash(
+            registerInfo.password,
+            +process.env.SALT_ROUNDS,
+          ),
+        },
+      },
     });
 
     if (!createdUser) {

@@ -8,30 +8,61 @@ const userData: Prisma.UserCreateInput[] = [
   {
     fullName: 'Alice Chau',
     email: 'alicechau@gmail.com',
-    password: hashSync('12345678', saltRounds),
     avatarUrl:
       'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
   },
   {
     fullName: 'Harris Houston',
     email: 'harris@gmail.com',
-    password: hashSync('12345678', saltRounds),
     avatarUrl:
       'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
   },
   {
     fullName: 'Hamza Eaton',
     email: 'hamza@gmail.com',
-    password: hashSync('12345678', saltRounds),
     avatarUrl:
       'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
   },
   {
     fullName: 'Phat Sau',
     email: 'saudaiphat@gmail.com',
-    password: hashSync('12345678', saltRounds),
     avatarUrl:
       'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=',
+  },
+];
+
+const credentialData: Prisma.CredentialCreateInput[] = [
+  {
+    password: hashSync('12345678', saltRounds),
+    user: {
+      connect: {
+        email: 'alicechau@gmail.com',
+      },
+    },
+  },
+  {
+    user: {
+      connect: {
+        email: 'harris@gmail.com',
+      },
+    },
+    password: hashSync('12345678', saltRounds),
+  },
+  {
+    user: {
+      connect: {
+        email: 'hamza@gmail.com',
+      },
+    },
+    password: hashSync('12345678', saltRounds),
+  },
+  {
+    user: {
+      connect: {
+        email: 'saudaiphat@gmail.com',
+      },
+    },
+    password: hashSync('12345678', saltRounds),
   },
 ];
 
@@ -184,11 +215,17 @@ const boardColumns: Prisma.BoardColumnCreateInput[] = [
 
 async function main() {
   console.log(`Start seeding ...`);
+
   for (const u of userData) {
     const user = await prisma.user.create({
       data: u,
     });
     console.log(`Created user with id: ${user.id}`);
+  }
+
+  for (const c of credentialData) {
+    const credential = await prisma.credential.create({ data: c });
+    console.log(`Created credentail with email: ${credential.email}`);
   }
 
   for (const b of boardData) {

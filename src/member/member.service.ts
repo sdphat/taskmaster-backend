@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { BoardRole } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
@@ -51,9 +52,8 @@ export class MemberService {
       },
     });
 
-    // Todo: Make user register instead of throwing errors
     if (!foundUser) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
 
     // Update hasJoined flag to true
