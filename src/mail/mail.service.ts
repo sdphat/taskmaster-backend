@@ -31,7 +31,5 @@ export class MailService {
         },
       },
     );
-
-    console.log(response.data);
   }
 }

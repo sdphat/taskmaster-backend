@@ -77,7 +77,11 @@ export class AuthService {
       throw new BadRequestException();
     }
 
-    if (await this.usersService.findOne(registerInfo.email)) {
+    // Check if a profile is already linked with password
+    const user = await this.usersService.findOne(registerInfo.email, {
+      Credential: true,
+    });
+    if (user && user.Credential) {
       throw new ConflictException();
     }
 
@@ -86,14 +90,10 @@ export class AuthService {
       fullName: registerInfo.fullName,
       avatarUrl:
         'https://st3.depositphotos.com/3271841/13147/i/450/depositphotos_131477174-stock-photo-simple-colorful-gradient-light-blurred.jpg',
-      Credential: {
-        create: {
-          password: await bcrypt.hash(
-            registerInfo.password,
-            +process.env.SALT_ROUNDS,
-          ),
-        },
-      },
+      password: await bcrypt.hash(
+        registerInfo.password,
+        +process.env.SALT_ROUNDS,
+      ),
     });
 
     if (!createdUser) {

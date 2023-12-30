@@ -48,7 +48,9 @@ export class MemberService {
 
     const foundUser = await this.prismaService.user.findFirst({
       where: {
-        email: data.email,
+        Credential: {
+          email: data.email,
+        },
       },
     });
 
@@ -78,7 +80,7 @@ export class MemberService {
       },
     });
 
-    return true;
+    return { boardId: data.boardId };
   }
 
   async addMemberToBoard({ boardId, email, memberRole }: AddMemberArgs) {
@@ -93,8 +95,15 @@ export class MemberService {
             },
           },
           User: {
-            connect: {
-              email,
+            connectOrCreate: {
+              create: {
+                email,
+                fullName: email,
+                avatarUrl: '',
+              },
+              where: {
+                email,
+              },
             },
           },
         },
