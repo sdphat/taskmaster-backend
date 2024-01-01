@@ -10,14 +10,9 @@ import { ConfigModule } from './config/config.module';
 import { MailModule } from './mail/mail.module';
 import { MemberModule } from './member/member.module';
 import { UsersModule } from './users/users.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import path from 'path';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: path.join(__dirname, '..', 'public'),
-    }),
     AuthModule,
     UsersModule,
     ConfigModule,

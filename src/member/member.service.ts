@@ -130,7 +130,7 @@ export class MemberService {
         isTransactional: true,
         to: email,
         subject: 'Invitation to Taskmaster board',
-        bodyHtml: `<a href='http://localhost:5173/invitation?code=${invitationCode}'>Join board</a>`,
+        bodyHtml: `<a href='${process.env['FRONT_END_URL']}/invitation?code=${invitationCode}'>Join board</a>`,
       });
 
       return returnData;
