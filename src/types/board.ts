@@ -24,6 +24,7 @@ export class BoardColumnCard {
   Labels: Label[];
   summary: string;
   BoardColumnCardMembers: BoardColumnCardMember[];
+  Attachments: Attachment[];
 }
 
 export class Comment {
@@ -56,4 +57,11 @@ export class User {
 export class BoardColumnCardMember {
   boardMemberId: number;
   Member: BoardMember;
+}
+
+export class Attachment {
+  id: number;
+  url: string;
+  name: string;
+  type: string;
 }

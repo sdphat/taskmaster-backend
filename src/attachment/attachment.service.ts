@@ -2,10 +2,20 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { extractPublicId, setConfig } from 'cloudinary-build-url';
+import { PrismaService } from '../prisma.service';
+
+export interface CreateAttachmentReturn {
+  url: string;
+  type: string;
+  name: string;
+}
 
 @Injectable()
 export class AttachmentService {
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private prismaService: PrismaService,
+  ) {
     cloudinary.config({
       cloud_name: configService.getOrThrow<string>('CLOUDINARY_CLOUD_NAME'),
       api_key: configService.getOrThrow<string>('CLOUDINARY_API_KEY'),
@@ -18,7 +28,7 @@ export class AttachmentService {
     });
   }
 
-  async create(file: Express.Multer.File): Promise<{ url: string }> {
+  async create(file: Express.Multer.File): Promise<CreateAttachmentReturn> {
     const uploadResult: UploadApiResponse = await new Promise((resolve) => {
       cloudinary.uploader
         .upload_stream((error, uploadResult) => {
@@ -26,7 +36,18 @@ export class AttachmentService {
         })
         .end(file.buffer);
     });
-    return { url: uploadResult.url };
+    await this.prismaService.attachment.create({
+      data: {
+        url: uploadResult.url,
+        type: uploadResult.resource_type,
+        name: file.originalname,
+      },
+    });
+    return {
+      url: uploadResult.url,
+      type: uploadResult.resource_type,
+      name: file.originalname,
+    };
   }
 
   async remove(url: string) {

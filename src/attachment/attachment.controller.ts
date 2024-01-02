@@ -23,6 +23,7 @@ export class AttachmentController {
         .addMaxSizeValidator({
           maxSize: +process.env['MAX_UPLOAD_FILE_BYTE_SIZE'],
         })
+        .addFileTypeValidator({ fileType: /(jpg|jpeg|png)/ })
         .build(),
     )
     file: Express.Multer.File,

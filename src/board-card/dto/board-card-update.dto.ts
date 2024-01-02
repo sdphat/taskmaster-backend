@@ -20,4 +20,8 @@ export class BoardCardUpdateDto implements BoardCardUpdateData {
   @IsOptional()
   @IsNumber({}, { each: true })
   labels?: number[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  attachments?: string[];
 }

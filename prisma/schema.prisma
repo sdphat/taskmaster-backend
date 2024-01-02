@@ -57,6 +57,7 @@ model BoardColumnCard {
   BoardColumn            BoardColumn?             @relation(fields: [boardColumnId], references: [id], onDelete: Cascade)
   boardColumnId          Int?
   BoardColumnCardMembers BoardColumnCardMembers[]
+  Attachments            Attachment[]
 }
 
 model BoardLabel {
@@ -108,4 +109,13 @@ enum BoardRole {
   COLLABORATOR
   ADMIN
   OBSERVER
+}
+
+model Attachment {
+  id                Int             @id @default(autoincrement())
+  url               String          @unique
+  type              String
+  name              String
+  BoardColumnCard   BoardColumnCard? @relation(fields: [boardColumnCardId], references: [id])
+  boardColumnCardId Int?
 }

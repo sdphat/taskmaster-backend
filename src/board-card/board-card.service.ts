@@ -15,6 +15,7 @@ export interface BoardCardUpdateData {
   summary?: string;
   dueDate?: Date;
   labels?: number[];
+  attachments?: string[];
 }
 
 export const cardSelectFields = {
@@ -69,6 +70,7 @@ export const cardSelectFields = {
   Labels: true,
   summary: true,
   cardIdx: true,
+  Attachments: true,
   boardColumnId: true,
 } satisfies Prisma.BoardColumnCardSelect;
 
@@ -213,6 +215,11 @@ export class BoardCardService {
         Labels: {
           connect: (data.labels ?? []).map((labelId) => ({
             id: labelId,
+          })),
+        },
+        Attachments: {
+          connect: (data.attachments ?? []).map((url) => ({
+            url,
           })),
         },
       },

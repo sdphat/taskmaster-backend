@@ -63,6 +63,7 @@ const boardSelect = {
       Labels: true,
       summary: true,
       cardIdx: true,
+      Attachments: true,
     },
   },
 } satisfies Prisma.BoardColumnSelect;

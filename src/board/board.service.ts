@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 
@@ -66,6 +62,7 @@ const boardSelect = {
           Labels: true,
           summary: true,
           cardIdx: true,
+          Attachments: true,
         },
       },
     },
