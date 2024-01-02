@@ -56,5 +56,10 @@ export class AttachmentService {
     if (response.result !== 'ok') {
       throw new ForbiddenException();
     }
+    await this.prismaService.attachment.delete({
+      where: {
+        url,
+      },
+    });
   }
 }
