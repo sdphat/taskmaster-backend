@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 
 export interface CreateUserData {
@@ -8,6 +8,10 @@ export interface CreateUserData {
   fullName: string;
   password: string;
 }
+
+export type UpdateUserData = Partial<
+  Pick<User, 'id' | 'avatarUrl' | 'fullName'>
+>;
 
 @Injectable()
 export class UsersService {
@@ -49,5 +53,17 @@ export class UsersService {
         email,
       },
     });
+  }
+
+  async update({ id, ...data }: UpdateUserData, select: Prisma.UserSelect) {
+    try {
+      return await this.prismaService.user.update({
+        data,
+        select,
+        where: { id },
+      });
+    } catch (err) {
+      throw new ForbiddenException();
+    }
   }
 }
