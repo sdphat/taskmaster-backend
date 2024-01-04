@@ -7,6 +7,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Req,
   Res,
   UseGuards,
@@ -17,10 +18,11 @@ import {
 } from 'express';
 import ms from 'ms';
 import { cookieConstants } from '../auth/constants';
-import { BoardService } from './board.service';
-import { CreateBoardDto } from './dto/create-board.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import { BoardService } from './board.service';
+import { CreateBoardDto } from './dto/create-board.dto';
+import { UpdateBoardDto } from './dto/update-board.dto';
 
 @Controller('board')
 export class BoardController {
@@ -65,6 +67,18 @@ export class BoardController {
     );
 
     return board;
+  }
+
+  @Roles(['ADMIN', 'COLLABORATOR'])
+  @Put(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: UpdateBoardDto,
+  ) {
+    return this.boardService.updateBoard({
+      id,
+      ...data,
+    });
   }
 
   @Post()

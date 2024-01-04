@@ -89,6 +89,12 @@ export interface CreateBoardArgs {
   title: string;
   userId: number;
 }
+
+export interface UpdateBoardArgs {
+  id: number;
+  name?: string;
+  backgroundUrl?: string;
+}
 @Injectable()
 export class BoardService {
   constructor(private prismaService: PrismaService) {}
@@ -137,6 +143,17 @@ export class BoardService {
   async deleteBoard(id: number) {
     try {
       return await this.prismaService.board.delete({ where: { id } });
+    } catch (err) {
+      throw new ForbiddenException();
+    }
+  }
+
+  async updateBoard({ id, ...data }: UpdateBoardArgs) {
+    try {
+      return await this.prismaService.board.update({
+        data: data,
+        where: { id },
+      });
     } catch (err) {
       throw new ForbiddenException();
     }
