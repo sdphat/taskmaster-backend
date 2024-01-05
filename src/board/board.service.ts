@@ -171,15 +171,18 @@ export class BoardService {
       return await this.prismaService.board.update({
         data: {
           name,
-          background: {
-            connect: {
-              url: backgroundUrl,
+          ...(backgroundUrl && {
+            background: {
+              connect: {
+                url: backgroundUrl,
+              },
             },
-          },
+          }),
         },
         where: { id },
       });
     } catch (err) {
+      console.log(err);
       throw new ForbiddenException();
     }
   }
