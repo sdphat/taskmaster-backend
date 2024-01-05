@@ -5,7 +5,14 @@ import { PrismaService } from '../prisma.service';
 const boardSelect = {
   id: true,
   name: true,
-  backgroundUrl: true,
+  background: {
+    select: {
+      id: true,
+      name: true,
+      type: true,
+      url: true,
+    },
+  },
   BoardColumns: {
     select: {
       name: true,
@@ -102,7 +109,18 @@ export class BoardService {
   async getAllBoards(userId: number) {
     const boards = await this.prismaService.board.findMany({
       where: { BoardMembers: { some: { userId } } },
-      select: { backgroundUrl: true, name: true, id: true },
+      select: {
+        background: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            url: true,
+          },
+        },
+        name: true,
+        id: true,
+      },
     });
 
     return boards;
@@ -148,10 +166,17 @@ export class BoardService {
     }
   }
 
-  async updateBoard({ id, ...data }: UpdateBoardArgs) {
+  async updateBoard({ id, name, backgroundUrl }: UpdateBoardArgs) {
     try {
       return await this.prismaService.board.update({
-        data: data,
+        data: {
+          name,
+          background: {
+            connect: {
+              url: backgroundUrl,
+            },
+          },
+        },
         where: { id },
       });
     } catch (err) {

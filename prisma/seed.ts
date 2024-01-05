@@ -69,8 +69,6 @@ const credentialData: Prisma.CredentialCreateInput[] = [
 const boardData: Prisma.BoardCreateInput[] = [
   {
     name: 'Thundermail',
-    backgroundUrl:
-      'https://st3.depositphotos.com/3271841/13147/i/450/depositphotos_131477174-stock-photo-simple-colorful-gradient-light-blurred.jpg',
   },
 ];
 

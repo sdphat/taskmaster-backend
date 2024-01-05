@@ -3,7 +3,7 @@ import { BoardRole } from '@prisma/client';
 export class Board {
   id: number;
   name: string;
-  backgroundUrl: string;
+  background?: Attachment;
   BoardColumns: BoardColumn[];
   BoardLabels: Label[];
   BoardMembers: BoardMember[];

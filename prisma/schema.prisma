@@ -27,12 +27,13 @@ model Credential {
 }
 
 model Board {
-  id            Int           @id @default(autoincrement())
-  name          String
-  backgroundUrl String?       @db.MediumText
-  BoardMembers  BoardMember[]
-  BoardColumns  BoardColumn[]
-  BoardLabels   BoardLabel[]
+  id           Int           @id @default(autoincrement())
+  name         String
+  background   Attachment?   @relation(fields: [backgroundId], references: [id])
+  backgroundId Int?          @unique
+  BoardMembers BoardMember[]
+  BoardColumns BoardColumn[]
+  BoardLabels  BoardLabel[]
 }
 
 model BoardColumn {
@@ -112,10 +113,11 @@ enum BoardRole {
 }
 
 model Attachment {
-  id                Int             @id @default(autoincrement())
-  url               String          @unique
+  id                Int              @id @default(autoincrement())
+  url               String           @unique
   type              String
   name              String
   BoardColumnCard   BoardColumnCard? @relation(fields: [boardColumnCardId], references: [id])
   boardColumnCardId Int?
+  Board             Board?
 }
