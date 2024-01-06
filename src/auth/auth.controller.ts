@@ -19,6 +19,8 @@ import { Public } from './decorators/public.decorator';
 import { RegisterDto } from './dto/register.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { jwtConstants } from './constants';
+import { PasswordResetDto } from './dto/password-reset.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -79,6 +81,18 @@ export class AuthController {
   @Get('profile')
   getProfile(@Request() req) {
     return this.authService.getProfile(req.user.email);
+  }
+
+  @Public()
+  @Post('password-reset')
+  async resetPassword(@Body() { email }: PasswordResetDto) {
+    return await this.authService.sendPasswordReset(email);
+  }
+
+  @Public()
+  @Post('change-password')
+  async changePassword(@Body() { token, password }: ChangePasswordDto) {
+    return await this.authService.changePassword(token, password);
   }
 
   @HttpCode(HttpStatus.OK)

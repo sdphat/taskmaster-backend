@@ -9,6 +9,8 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { RefreshTokenJwtService } from './RefreshTokenJwt.service';
 import { RolesGuard } from './roles.guard';
+import { MailModule } from '../mail/mail.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { RolesGuard } from './roles.guard';
     JwtModule.register({
       global: true,
     }),
+    MailModule,
+    CacheModule.register(),
   ],
   controllers: [AuthController],
   providers: [

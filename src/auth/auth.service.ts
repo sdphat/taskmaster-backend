@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -10,6 +12,12 @@ import { IsNumber, IsString, validate } from 'class-validator';
 import { UsersService } from '../users/users.service';
 import { AccessTokenJwtService } from './AccessTokenJwt.service';
 import { RefreshTokenJwtService } from './RefreshTokenJwt.service';
+import { MailService } from '../mail/mail.service';
+import { randomBytes } from 'crypto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import ms from 'ms';
+import { PrismaService } from '../prisma.service';
 
 class RegisterInfo {
   @IsString()
@@ -35,12 +43,20 @@ export class UserPublicBriefInfo {
   fullName: string;
   email: string;
 }
+
+class PasswordResetCacheData {
+  id: number;
+  email: string;
+}
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private accessTokenJwtService: AccessTokenJwtService,
     private refreshTokenJwtService: RefreshTokenJwtService,
+    private mailService: MailService,
+    private prismaService: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async signIn(email: string, password: string) {
@@ -145,5 +161,46 @@ export class AuthService {
     }
 
     return userInfo;
+  }
+
+  generateResetPasswordToken() {
+    return randomBytes(16).toString('hex');
+  }
+
+  async sendPasswordReset(email: string) {
+    const userInfo = await this.usersService.findOne(email);
+    if (!userInfo) {
+      throw new NotFoundException();
+    }
+
+    const token = this.generateResetPasswordToken();
+    await this.cacheManager.set(token, { id: userInfo.id, email }, ms('5m'));
+
+    await this.mailService.send({
+      from: this.mailService.SYSTEM_EMAIL,
+      subject: 'Taskmaster password reset',
+      isTransactional: true,
+      to: email,
+      bodyHtml: `There is a request to reset password of a taskmaster account associated with your email. Please ignore this email if you did not send a reset password request. If you did, click here to <a href='${process.env.FRONT_END_URL}/reset-password?token=${token}'>reset your password</a>`,
+    });
+  }
+
+  async changePassword(token: string, password: string) {
+    const cacheData =
+      await this.cacheManager.get<PasswordResetCacheData>(token);
+    if (!cacheData) {
+      throw new NotFoundException();
+    }
+
+    await this.prismaService.credential.update({
+      data: {
+        password: await bcrypt.hash(password, +process.env.SALT_ROUNDS),
+      },
+      where: {
+        email: cacheData.email,
+      },
+    });
+
+    await this.cacheManager.del(token);
   }
 }
