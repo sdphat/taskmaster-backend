@@ -66,7 +66,6 @@ export const cardSelectFields = {
     },
   },
   description: true,
-  dueDate: true,
   Labels: true,
   summary: true,
   cardIdx: true,
@@ -193,7 +192,6 @@ export class BoardCardService {
       select: {
         summary: true,
         description: true,
-        dueDate: true,
         BoardColumn: {
           select: {
             boardId: true,
@@ -211,7 +209,6 @@ export class BoardCardService {
       data: {
         summary: data.summary ?? card.summary,
         description: data.description ?? card.description,
-        dueDate: data.dueDate ?? card.dueDate,
         Labels: {
           connect: (data.labels ?? []).map((labelId) => ({
             id: labelId,

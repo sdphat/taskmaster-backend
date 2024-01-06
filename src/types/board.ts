@@ -20,7 +20,6 @@ export class BoardColumnCard {
   cardIdx: number;
   Comments: Comment[];
   description: string;
-  dueDate: null | Date;
   Labels: Label[];
   summary: string;
   BoardColumnCardMembers: BoardColumnCardMember[];

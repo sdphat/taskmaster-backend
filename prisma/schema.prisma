@@ -54,7 +54,6 @@ model BoardColumnCard {
   description            String                   @db.LongText
   Labels                 BoardLabel[]
   Comments               BoardColumnCardComment[]
-  dueDate                DateTime?
   BoardColumn            BoardColumn?             @relation(fields: [boardColumnId], references: [id], onDelete: Cascade)
   boardColumnId          Int?
   BoardColumnCardMembers BoardColumnCardMembers[]

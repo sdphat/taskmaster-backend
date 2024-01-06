@@ -163,14 +163,12 @@ const boardColumns: Prisma.BoardColumnCreateInput[] = [
           summary: 'Create login page',
           description:
             'Login page must include email field, password field, login button and a link to register page.',
-          dueDate: new Date(2023, 10, 20),
           cardIdx: 0,
         },
         {
           summary: 'Create register page',
           description:
             'Register page must include email, full name, password field, register button and a link to login page.',
-          dueDate: new Date(2023, 10, 22),
           cardIdx: 1,
         },
       ],

@@ -65,7 +65,6 @@ const boardSelect = {
             },
           },
           description: true,
-          dueDate: true,
           Labels: true,
           summary: true,
           cardIdx: true,
