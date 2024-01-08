@@ -1,3 +1,4 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   ForbiddenException,
@@ -6,13 +7,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { BoardRole } from '@prisma/client';
-import { PrismaService } from '../prisma.service';
-import { InvitationCodeGeneratorService } from './invitation-code-generator/invitation-code-generator.service';
-import { MailService } from '../mail/mail.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import ms from 'ms';
+import { MailService } from '../mail/mail.service';
+import { PrismaService } from '../prisma.service';
 import { InvitationDto } from './dto/invitation.dto';
+import { InvitationCodeGeneratorService } from './invitation-code-generator/invitation-code-generator.service';
 export interface AddMemberArgs {
   boardId: number;
   email: string;
@@ -125,12 +125,18 @@ export class MemberService {
       const invitationCode = this.invitationCodeGenerator.generate();
       await this.cacheManager.set(invitationCode, { email, boardId }, ms('1d'));
 
+      const board = await this.prismaService.board.findFirst({
+        where: {
+          id: boardId,
+        },
+      });
+
       await this.mailSerivce.send({
         from: this.mailSerivce.SYSTEM_EMAIL,
         isTransactional: true,
         to: email,
         subject: 'Invitation to Taskmaster board',
-        bodyHtml: `<a href='${process.env['FRONT_END_URL']}/invitation?code=${invitationCode}'>Join board</a>`,
+        bodyHtml: `You have been invited to join board <b>${board.name}</b>. <a href='${process.env['FRONT_END_URL']}/invitation?code=${invitationCode}'>Join board</a>`,
       });
 
       return returnData;
