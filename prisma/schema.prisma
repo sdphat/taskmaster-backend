@@ -19,11 +19,17 @@ model User {
   Credential  Credential?
 }
 
+enum CredentialProvider {
+  LOCAL
+  GOOGLE
+}
+
 model Credential {
   id       Int    @id @default(autoincrement())
+  provider CredentialProvider
   user     User   @relation(fields: [email], references: [email])
   email    String @unique
-  password String
+  password String?
 }
 
 model Board {

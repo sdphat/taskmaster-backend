@@ -33,6 +33,7 @@ const userData: Prisma.UserCreateInput[] = [
 
 const credentialData: Prisma.CredentialCreateInput[] = [
   {
+    provider: 'LOCAL',
     password: hashSync('12345678', saltRounds),
     user: {
       connect: {
@@ -41,6 +42,7 @@ const credentialData: Prisma.CredentialCreateInput[] = [
     },
   },
   {
+    provider: 'LOCAL',
     user: {
       connect: {
         email: 'harris@gmail.com',
@@ -49,6 +51,7 @@ const credentialData: Prisma.CredentialCreateInput[] = [
     password: hashSync('12345678', saltRounds),
   },
   {
+    provider: 'LOCAL',
     user: {
       connect: {
         email: 'hamza@gmail.com',
@@ -57,6 +60,7 @@ const credentialData: Prisma.CredentialCreateInput[] = [
     password: hashSync('12345678', saltRounds),
   },
   {
+    provider: 'LOCAL',
     user: {
       connect: {
         email: 'saudaiphat@gmail.com',

@@ -1,3 +1,4 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   ConflictException,
@@ -8,16 +9,16 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import bcrypt, { compare } from 'bcrypt';
+import { Cache } from 'cache-manager';
 import { IsNumber, IsString, validate } from 'class-validator';
+import { randomBytes } from 'crypto';
+import ms from 'ms';
+import { MailService } from '../mail/mail.service';
+import { PrismaService } from '../prisma.service';
 import { UsersService } from '../users/users.service';
 import { AccessTokenJwtService } from './AccessTokenJwt.service';
+import { GoogleOAuthService } from './GoogleOAuth.service';
 import { RefreshTokenJwtService } from './RefreshTokenJwt.service';
-import { MailService } from '../mail/mail.service';
-import { randomBytes } from 'crypto';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
-import ms from 'ms';
-import { PrismaService } from '../prisma.service';
 
 class RegisterInfo {
   @IsString()
@@ -56,6 +57,7 @@ export class AuthService {
     private refreshTokenJwtService: RefreshTokenJwtService,
     private mailService: MailService,
     private prismaService: PrismaService,
+    private googleOAuthService: GoogleOAuthService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -71,6 +73,10 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
+    if (user.Credential.provider !== 'LOCAL') {
+      throw new UnauthorizedException();
+    }
+
     const passwordMatches = await compare(password, user.Credential.password);
     if (!passwordMatches) {
       throw new UnauthorizedException();
@@ -81,6 +87,65 @@ export class AuthService {
       email: user.email,
       avatarUrl: user.avatarUrl,
     };
+    return {
+      access_token: await this.accessTokenJwtService.generate(payload),
+      refresh_token: await this.refreshTokenJwtService.generate(payload),
+    };
+  }
+
+  async signInWithGoogle(code: string) {
+    const { tokens } =
+      await this.googleOAuthService.oAuth2Client.getToken(code);
+
+    const data = await this.googleOAuthService.oAuth2Client.verifyIdToken({
+      idToken: tokens.id_token,
+    });
+
+    const tokenPayload = data.getPayload();
+
+    const userWithDifferentProvider =
+      await this.prismaService.credential.findFirst({
+        where: {
+          email: tokenPayload.email,
+          provider: {
+            not: 'GOOGLE',
+          },
+        },
+      });
+
+    if (userWithDifferentProvider) {
+      throw new ConflictException();
+    }
+
+    const user = await this.prismaService.user.upsert({
+      create: {
+        avatarUrl: tokenPayload.picture,
+        email: tokenPayload.email,
+        fullName: `${tokenPayload.given_name} ${tokenPayload.family_name}`,
+        Credential: {
+          create: {
+            provider: 'GOOGLE',
+          },
+        },
+      },
+      update: {
+        avatarUrl: tokenPayload.picture,
+        email: tokenPayload.email,
+        fullName: `${tokenPayload.given_name ?? ''} ${
+          tokenPayload.family_name ?? ''
+        }`.trim(),
+      },
+      where: {
+        email: tokenPayload.email,
+      },
+    });
+
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+    };
+
     return {
       access_token: await this.accessTokenJwtService.generate(payload),
       refresh_token: await this.refreshTokenJwtService.generate(payload),
@@ -101,7 +166,8 @@ export class AuthService {
       throw new ConflictException();
     }
 
-    const createdUser: User = await this.usersService.create({
+    const createdUser: User = await this.usersService.createAndUpdate({
+      provider: 'LOCAL',
       email: registerInfo.email,
       fullName: registerInfo.fullName,
       avatarUrl:
@@ -141,6 +207,7 @@ export class AuthService {
       email: userInfo.email,
       avatarUrl: userInfo.avatarUrl,
     };
+
     return {
       access_token: await this.accessTokenJwtService.generate(payload),
     };
@@ -168,8 +235,14 @@ export class AuthService {
   }
 
   async sendPasswordReset(email: string) {
-    const userInfo = await this.usersService.findOne(email);
-    if (!userInfo) {
+    const userInfo = await this.usersService.findOne(email, {
+      id: true,
+      email: true,
+      avatarUrl: true,
+      fullName: true,
+      Credential: true,
+    });
+    if (!userInfo || userInfo.Credential.provider !== 'LOCAL') {
       throw new NotFoundException();
     }
 

@@ -15,12 +15,13 @@ import {
 } from 'express';
 import ms from 'ms';
 import { AuthService } from './auth.service';
+import { jwtConstants } from './constants';
 import { Public } from './decorators/public.decorator';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { LoginWithGoogleDto } from './dto/login-with-google.dto';
+import { PasswordResetDto } from './dto/password-reset.dto';
 import { RegisterDto } from './dto/register.dto';
 import { SignInDto } from './dto/sign-in.dto';
-import { jwtConstants } from './constants';
-import { PasswordResetDto } from './dto/password-reset.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -44,6 +45,19 @@ export class AuthController {
       // domain: 'localhost',
       sameSite: 'strict',
     });
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('login/google')
+  @Public()
+  async loginWithGoogle(
+    @Body() loginWithGoogleDto: LoginWithGoogleDto,
+    @Response({ passthrough: true }) response: ExpressResponse,
+  ) {
+    const { access_token, refresh_token } =
+      await this.authService.signInWithGoogle(loginWithGoogleDto.code);
+    this.attachAccessToken(response, access_token);
+    this.attachRefreshToken(response, refresh_token);
   }
 
   @HttpCode(HttpStatus.OK)

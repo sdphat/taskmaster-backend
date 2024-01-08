@@ -1,13 +1,21 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { CredentialProvider, Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
 
-export interface CreateUserData {
-  email: string;
-  avatarUrl: string;
-  fullName: string;
-  password: string;
-}
+export type CreateUserData =
+  | {
+      provider: typeof CredentialProvider.LOCAL;
+      email: string;
+      avatarUrl: string;
+      fullName: string;
+      password: string;
+    }
+  | {
+      provider: typeof CredentialProvider.GOOGLE;
+      email: string;
+      avatarUrl: string;
+      fullName: string;
+    };
 
 export type UpdateUserData = Partial<
   Pick<User, 'id' | 'avatarUrl' | 'fullName'>
@@ -25,32 +33,25 @@ export class UsersService {
     });
   }
 
-  async create({ avatarUrl, email, fullName, password }: CreateUserData) {
-    return this.prismaService.user.upsert({
-      // Create profile and credential if profile not found
-      create: {
-        avatarUrl,
-        email,
-        fullName,
-        Credential: {
-          create: {
-            password,
-          },
+  async createAndUpdate(data: CreateUserData) {
+    const upsertData: Prisma.UserUpsertArgs['create'] = {
+      avatarUrl: data.avatarUrl,
+      email: data.email,
+      fullName: data.fullName,
+      Credential: {
+        create: {
+          provider: data.provider,
+          password: data.provider === 'LOCAL' ? data.password : undefined,
         },
       },
+    };
 
-      // Update profile info and create credential if profile is found with specified email
-      update: {
-        avatarUrl,
-        fullName,
-        Credential: {
-          create: {
-            password,
-          },
-        },
-      },
+    // Create credential and update matched profile
+    return this.prismaService.user.upsert({
+      create: upsertData,
+      update: upsertData,
       where: {
-        email,
+        email: data.email,
       },
     });
   }
