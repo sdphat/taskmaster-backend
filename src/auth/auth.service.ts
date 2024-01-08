@@ -117,24 +117,48 @@ export class AuthService {
       throw new ConflictException();
     }
 
-    const user = await this.prismaService.user.upsert({
-      create: {
-        avatarUrl: tokenPayload.picture,
+    // Check if a profile is already linked with an account
+    const foundUser = await this.prismaService.user.findFirst({
+      where: {
         email: tokenPayload.email,
-        fullName: `${tokenPayload.given_name} ${tokenPayload.family_name}`,
-        Credential: {
-          create: {
-            provider: 'GOOGLE',
+      },
+      select: {
+        Credential: true,
+      },
+    });
+
+    // Create an account if profile doesn't exist or it isn't linked
+    if (!foundUser || !foundUser.Credential) {
+      await this.prismaService.user.upsert({
+        create: {
+          avatarUrl: tokenPayload.picture,
+          email: tokenPayload.email,
+          fullName: `${tokenPayload.given_name} ${tokenPayload.family_name}`,
+          Credential: {
+            create: {
+              provider: 'GOOGLE',
+            },
           },
         },
-      },
-      update: {
-        avatarUrl: tokenPayload.picture,
-        email: tokenPayload.email,
-        fullName: `${tokenPayload.given_name ?? ''} ${
-          tokenPayload.family_name ?? ''
-        }`.trim(),
-      },
+        update: {
+          avatarUrl: tokenPayload.picture,
+          email: tokenPayload.email,
+          fullName: `${tokenPayload.given_name ?? ''} ${
+            tokenPayload.family_name ?? ''
+          }`.trim(),
+          Credential: {
+            create: {
+              provider: 'GOOGLE',
+            },
+          },
+        },
+        where: {
+          email: tokenPayload.email,
+        },
+      });
+    }
+
+    const user = await this.prismaService.user.findFirst({
       where: {
         email: tokenPayload.email,
       },
