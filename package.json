@@ -22,7 +22,8 @@
     "migrate:prod": "npm run env:dev -- prisma migrate deploy",
     "env:dev": "dotenv -e .env.development -- cross-env NODE_ENV=development",
     "env:prod": "dotenv -e .env -- cross-env NODE_ENV=production",
-    "seed:dev": "npm run env:dev -- npx prisma db push --force-reset && npm run env:dev -- npx prisma db seed"
+    "seed:dev": "npm run env:dev -- npx prisma db push --force-reset && npm run env:dev -- npx prisma db seed",
+    "seed:prod": "npm run env:prod -- npx prisma db push --force-reset && npm run env:prod -- npx prisma db seed"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.1.1",
