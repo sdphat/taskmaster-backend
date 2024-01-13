@@ -83,7 +83,7 @@ const boardLabels: Prisma.BoardLabelCreateInput[] = [
         id: 1,
       },
     },
-    color: '#0062FF',
+    color: '#F5CD47',
     name: 'Low priority',
   },
   {
@@ -92,7 +92,7 @@ const boardLabels: Prisma.BoardLabelCreateInput[] = [
         id: 1,
       },
     },
-    color: '#FFC100',
+    color: '#FEA362',
     name: 'Medium priority',
   },
   {
@@ -101,7 +101,7 @@ const boardLabels: Prisma.BoardLabelCreateInput[] = [
         id: 1,
       },
     },
-    color: '#FF003B',
+    color: '#AE4787',
     name: 'High priority',
   },
 ];
