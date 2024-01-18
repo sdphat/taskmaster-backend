@@ -38,7 +38,7 @@ export class AuthController {
     accessToken: string,
   ) {
     const url = this.constructURL(request);
-    response.cookie('access_token', accessToken, {
+    response.cookie('taskmaster_access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.accessTokenMaxAge),
@@ -52,7 +52,7 @@ export class AuthController {
     refreshToken: string,
   ) {
     const url = this.constructURL(request);
-    response.cookie('refresh_token', refreshToken, {
+    response.cookie('taskmaster_refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.refreshTokenMaxAge),
@@ -97,7 +97,7 @@ export class AuthController {
     @Request() request: ExpressRequest,
     @Response({ passthrough: true }) response: ExpressResponse,
   ) {
-    const refreshToken = request.cookies['refresh_token'];
+    const refreshToken = request.cookies['taskmaster_refresh_token'];
     if (!refreshToken) {
       throw new UnauthorizedException();
     }
