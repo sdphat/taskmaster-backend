@@ -42,6 +42,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.accessTokenMaxAge),
+      sameSite: 'none',
       domain: url.hostname === 'localhost' ? undefined : url.hostname,
     });
   }
@@ -56,6 +57,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.refreshTokenMaxAge),
+      sameSite: 'none',
       domain: url.hostname === 'localhost' ? undefined : url.hostname,
     });
   }
