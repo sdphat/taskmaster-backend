@@ -38,13 +38,11 @@ export class AuthController {
     accessToken: string,
   ) {
     const url = this.constructURL(request);
-    console.log(url);
     response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.accessTokenMaxAge),
       domain: url.hostname === 'localhost' ? undefined : url.hostname,
-      sameSite: 'strict',
     });
   }
 
@@ -59,7 +57,6 @@ export class AuthController {
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.refreshTokenMaxAge),
       domain: url.hostname === 'localhost' ? undefined : url.hostname,
-      sameSite: 'strict',
     });
   }
 
