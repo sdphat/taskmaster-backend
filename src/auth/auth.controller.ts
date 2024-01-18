@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Request,
   Response,
   UnauthorizedException,
@@ -27,22 +28,36 @@ import { SignInDto } from './dto/sign-in.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  private attachAccessToken(response: ExpressResponse, accessToken: string) {
+  private constructURL(req: ExpressRequest) {
+    return new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
+  }
+
+  private attachAccessToken(
+    request: ExpressRequest,
+    response: ExpressResponse,
+    accessToken: string,
+  ) {
+    const url = this.constructURL(request);
     response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.accessTokenMaxAge),
-      // domain: 'localhost',
+      domain: url.hostname === 'localhost' ? undefined : url.hostname,
       sameSite: 'strict',
     });
   }
 
-  private attachRefreshToken(response: ExpressResponse, refreshToken: string) {
+  private attachRefreshToken(
+    request: ExpressRequest,
+    response: ExpressResponse,
+    refreshToken: string,
+  ) {
+    const url = this.constructURL(request);
     response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.refreshTokenMaxAge),
-      // domain: 'localhost',
+      domain: url.hostname === 'localhost' ? undefined : url.hostname,
       sameSite: 'strict',
     });
   }
@@ -52,12 +67,13 @@ export class AuthController {
   @Public()
   async loginWithGoogle(
     @Body() loginWithGoogleDto: LoginWithGoogleDto,
+    @Req() request: ExpressRequest,
     @Response({ passthrough: true }) response: ExpressResponse,
   ) {
     const { access_token, refresh_token } =
       await this.authService.signInWithGoogle(loginWithGoogleDto.code);
-    this.attachAccessToken(response, access_token);
-    this.attachRefreshToken(response, refresh_token);
+    this.attachAccessToken(request, response, access_token);
+    this.attachRefreshToken(request, response, refresh_token);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -65,14 +81,15 @@ export class AuthController {
   @Public()
   async signIn(
     @Body() signInDto: SignInDto,
+    @Req() request: ExpressRequest,
     @Response({ passthrough: true }) response: ExpressResponse,
   ) {
     const { access_token, refresh_token } = await this.authService.signIn(
       signInDto.email,
       signInDto.password,
     );
-    this.attachAccessToken(response, access_token);
-    this.attachRefreshToken(response, refresh_token);
+    this.attachAccessToken(request, response, access_token);
+    this.attachRefreshToken(request, response, refresh_token);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -88,7 +105,7 @@ export class AuthController {
     }
 
     const { access_token } = await this.authService.refresh(refreshToken);
-    this.attachAccessToken(response, access_token);
+    this.attachAccessToken(request, response, access_token);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -114,12 +131,13 @@ export class AuthController {
   @Public()
   async register(
     @Body() registerDto: RegisterDto,
+    @Request() request: ExpressRequest,
     @Response({ passthrough: true }) res: ExpressResponse,
   ) {
     const { access_token, refresh_token } =
       await this.authService.register(registerDto);
-    this.attachAccessToken(res, access_token);
-    this.attachRefreshToken(res, refresh_token);
+    this.attachAccessToken(request, res, access_token);
+    this.attachRefreshToken(request, res, refresh_token);
   }
 
   @Post('logout')
