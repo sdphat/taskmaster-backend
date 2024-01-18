@@ -38,6 +38,7 @@ export class AuthController {
     accessToken: string,
   ) {
     const url = this.constructURL(request);
+    console.log(url);
     response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
