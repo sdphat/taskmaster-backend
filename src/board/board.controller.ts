@@ -60,6 +60,7 @@ export class BoardController {
       {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',
+        sameSite: 'none',
         maxAge: ms('5m'),
       },
     );

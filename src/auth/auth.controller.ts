@@ -40,6 +40,7 @@ export class AuthController {
     const url = this.constructURL(request);
     response.cookie('access_token', accessToken, {
       httpOnly: true,
+      sameSite: 'none',
       secure: process.env.NODE_ENV !== 'development',
       maxAge: ms(jwtConstants.accessTokenMaxAge),
     });
@@ -54,6 +55,7 @@ export class AuthController {
     response.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'none',
       maxAge: ms(jwtConstants.refreshTokenMaxAge),
     });
   }
